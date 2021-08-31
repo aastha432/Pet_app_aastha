@@ -1,0 +1,12 @@
+{
+  "usersData": [
+    {
+      "userType": "Buyer/Owner",
+      "name": "Owner",
+      "email": "owner@gmail.com",
+      "password": "owner@123",
+      "phoneNo": "123456789",
+      "id": 1
+    }
+  ]
+}
