@@ -2,6 +2,9 @@
   "name": "real-estate",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "14.x"
+  },
   "proxy": "http://api.endpoint.com/v1",
   "dependencies": {
     "@material-ui/core": "^4.11.4",
