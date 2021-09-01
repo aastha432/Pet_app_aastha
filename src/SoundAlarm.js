@@ -1,5 +1,6 @@
 import React from "react";
 import Soundalarm from "./assets/Soundalarm.png";
+import SoundAlarmbg from "./assets/SoundAlarmbg.png";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -48,7 +49,7 @@ const SoundAlarm = () => {
       <div>
         <center>
           <Button onClick={handleSoundAlarm}>
-            <img src={Soundalarm} className={ soundAlarm ? classes.image2on : classes.image2off} alt="Not loaded" />
+            <img src={Soundalarm} className={ soundAlarm ? classes.image2on : classes.image2off} />
           </Button>
           <br></br>
           <Typography variant="h5" gutterBottom>

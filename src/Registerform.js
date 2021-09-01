@@ -1,12 +1,22 @@
 import React, { useState } from "react";
+import Avatar from "@material-ui/core/Avatar";
+import { Redirect } from "react-router-dom";
 import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
+import dog from "./assets/dog.png";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import logo from "./assets/logo.png";
 import { Link as LinkRouter } from "react-router-dom";
 import "./login.css";
+import DataService from "./service/Data";
 import { signup } from "./coreAPIcalls/userAPIcalls";
 import BeanEater from "./assets/BeanEater.gif";
 import SuccessImage from './assets/successfulregistration.png'
@@ -30,7 +40,7 @@ const Registerform = () => {
      loading: false,
      show: false
     });
-  const {error,loading} = details;
+  const { name, email, password,error,loading, show } = details;
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -105,7 +115,7 @@ const Registerform = () => {
             }}
           >
             <div>
-            <img src={SuccessImage} alt="not loaded" /> <h3>Successfully registered.</h3>
+            <img src={SuccessImage} alt="SuccessImage image not loaded" /> <h3>Successfully registered.</h3>
               <p>{`Hey ${username},`}</p>
               <p>{`Verification email has been sent to ${useremail}. Kindly check your mail.`}</p>
             </div>
@@ -159,7 +169,7 @@ const Registerform = () => {
     <center>
       <Container component="main" maxWidth="xs">
         <div className={classes.paper}>
-          <img src={logo} alt="not loaded" />
+          <img src={logo} />
           {loadingMessage()}
           {errorMessage()}
           {successMessage()}

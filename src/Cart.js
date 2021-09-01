@@ -4,6 +4,19 @@ import { makeStyles } from "@material-ui/core/styles";
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import TextField from "@material-ui/core/TextField";
 
+import Icon from '@material-ui/core/Icon';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import { Redirect,Link } from "react-router-dom";
+
+
+
 
 const Cart =() =>{ 
 
@@ -71,15 +84,15 @@ const Cart =() =>{
     
       const classes = useStyles();
 
-      const[state, setState] = useState({count : 0})
-      let {count} = state;
+      const[state, setState] = useState({toggleswitch : true, count : 0})
+      let {toggleswitch, count} = state;
     
-      /*const onSubmit = (event) => {
+      const onSubmit = (event) => {
         event.preventDefault();
         const data = {
           count,
         };
-      };*/
+      };
 
     const Product = () => {
 
@@ -97,9 +110,9 @@ const Cart =() =>{
             })
         }
         }
-        /*function detleteProduct(){
+        function detleteProduct(){
             //
-        }*/
+        }
      return(
          <div>
              <br>

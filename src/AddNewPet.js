@@ -1,8 +1,11 @@
 import { Container } from '@material-ui/core';
-import React, {useState,useEffect } from 'react'
+import React, { Component, useState,useEffect } from 'react'
+import {Link} from 'react-router-dom';
+import DataService from "./service/Data";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import ScannerImage from "./assets/bitmap@2x.png"; 
 import {setDeviceInfo,getDeviceInfo} from "./coreAPIcalls/deviceAPIcalls"
 import BeanEater from "./assets/BeanEater.gif";
 import Table from '@material-ui/core/Table';
@@ -19,7 +22,7 @@ import {ListAllDevices, UpdateDevice} from "./coreAPIcalls/hologramAPIcalls"
 const AddNewPet = () => {
 
   const [details, setDetails] = useState({
-    deviceid: " ",
+    deviceid: "",
     petName: "",
     IMEI: "",
     breed: "", 
@@ -27,7 +30,7 @@ const AddNewPet = () => {
     formData: "",
     loading: false ,error: false
   });
-  const { deviceid,petName, IMEI, breed,loading,formData} = details;
+  const { deviceid,petName, IMEI, breed,loading,error,file,formData} = details;
   const [devices, setDevices] = useState([]);
 
   const preload = () => {
@@ -95,7 +98,7 @@ const AddNewPet = () => {
       .then(res => { 
         console.log(res.data);
         res.data.map((holo) => {
-          if(holo.imei === IMEI) {
+          if(holo.imei == IMEI) {
             console.log(holo.id);
             setDetails({...details,deviceid: (holo.id).toString() });
             formData.set(deviceid, (holo.id).toString());
@@ -110,9 +113,8 @@ const AddNewPet = () => {
         console.log("Successfull in hitting UpdateDevice function in hologramAPIcalls");
       })
       .catch(err => console.log(err));
-      
-      
-     console.log(formData);
+
+     
       setDeviceInfo(formData)
       .then(res => {  
         if (res.error) {
@@ -135,7 +137,7 @@ const AddNewPet = () => {
 
     const handleChange = common => event => {
       const value = common === "file" ? event.target.files[0] : event.target.value;
-      formData.append(common, value);
+      formData.set(common, value);
       setDetails({ ...details, [common]: value });
     };
 
@@ -269,6 +271,7 @@ const AddNewPet = () => {
               <center>
                 <Button
                variant="outlined"
+                  className="save"
                   type="submit"
                   className={classes.save}
                   onClick = {onSubmitsetDevice}

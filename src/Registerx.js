@@ -3,6 +3,7 @@ import "./login.css";
 import Link from "@material-ui/core/Link";
 import { Link as LinkRouter } from "react-router-dom";
 import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 import logo from "./assets/logo.png";
 import "./login.css";
 import dog from "./assets/dog.png";
@@ -41,17 +42,17 @@ const Registerx = () => {
       <center>
         <div className="flex-container">
           <div className="flex-container2">
-            <img src={dog} className={classes.image} alt="Not loaded"/>
+            <img src={dog} className={classes.image} />
           </div>
 
           <br></br>
           <br></br>
           <center>
           <div className={classes.paper}>
-            <img src={logo} alt="Not loaded" />
+            <img src={logo} />
               <h2 className="Successfully-registe ">
               <center>
-                  <img src={SuccessImage} alt="Not loaded" />
+                  <img src={SuccessImage} alt="SuccessImage image not loaded" />
               </center>
               Successfully Registered
               </h2>

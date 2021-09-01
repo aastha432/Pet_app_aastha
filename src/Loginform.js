@@ -1,15 +1,24 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
+import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
+import dog from "./assets/dog.png";
 import BeanEater from "./assets/BeanEater.gif"
+import Typography from "@material-ui/core/Typography";
 import { Link as LinkRouter } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import "./login.css";
-import { signin , authenticate} from "./coreAPIcalls/userAPIcalls";
+import { signin , isAuthenticated, authenticate} from "./coreAPIcalls/userAPIcalls";
+import PrivateRoute from "./PrivateRoutes";
 import {Horizontalnav} from "./components/Horizontalnav";
+import ForgotPassword from './ForgotPassword'
 
 const Loginform = () => {
   const [details, setDetails] = useState({
@@ -19,7 +28,7 @@ const Loginform = () => {
      loading: false,
      didRedirect: false
     });
-  const {error, loading,didRedirect} = details;
+  const { email, password, error, loading,didRedirect} = details;
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -177,6 +186,7 @@ const Loginform = () => {
                 className={classes.signin}
                 value="Submit"
                 type="submit"
+                value="Submit"
                 onClick={submitHandler}
               >
                   SignIn
