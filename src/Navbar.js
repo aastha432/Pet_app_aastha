@@ -1,14 +1,7 @@
 import React from "react";
-import { Link ,Redirect} from "react-router-dom";
+import {Redirect} from "react-router-dom";
 import {
-  // List,
-  // ListItem,
-  // ListItemText,
-  AppBar,
-  Toolbar,
   Grid,
-  Button,
-  Typography,
   makeStyles,
 } from "@material-ui/core";
 import SoundAlarm from "./SoundAlarm";
@@ -93,7 +86,7 @@ return  isAuthenticated() ?  <div>
 <Horizontalnav />
 
 <Router>
-  <Grid container className = {classes. Maincontainer}>
+  <Grid container className = {classes.Maincontainer}>
     <Grid item xs={2} className={classes.GridContainer}>
       <center>
         <VerticalNav pages={navPages} addnewpet={addnewpet} className={classes.navpages} />

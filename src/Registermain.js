@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import Profile from "./Profile";
 import Registerform from "./Registerform";
 import Registerx from "./Registerx";
 
 const Registermain = () => {
   const [user, setuser] = useState({ name: "", email: "" });
-  const [error, seterror] = useState(" ");
 
   const Register = (details) => {
     console.log(details);

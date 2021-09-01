@@ -5,23 +5,18 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
 import "./navbar.css";
 import logo from "../assets/logo.png";
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import Sweet from '../assets/Sweet/group-4.png';
-import Ricko from '../assets/Ricko/group-3.png';
 import Bailey from '../assets/Bailey/group-2.png';
 import PersonIcon from '@material-ui/icons/Person';
-import { Link as LinkRouter , Redirect} from "react-router-dom";
+import { Link as LinkRouter} from "react-router-dom";
 import Link from "@material-ui/core/Link";
 import { signout } from "../coreAPIcalls/userAPIcalls";
 import {getDeviceInfo} from "../coreAPIcalls/deviceAPIcalls"
-import WhereisMyPet from "../WhereisMyPet";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,7 +57,6 @@ export const Horizontalnav = () => {
   const classes = useStyles();
 
   const [age, setAge] = React.useState('');
-  const [username, setUsername] = React.useState('Aastha');
   const [devices, setDevices] = useState([]);
   const [refresh, serRefresh] = useState(true);
 
@@ -80,10 +74,6 @@ export const Horizontalnav = () => {
     preload();
   }, [refresh]);
 
-  const User = (name) => {
-    console.log(`${name} typeof ${typeof(name)}`);
-    setUsername(name);
-  }
 
   const handleChange = (event) => {
     setAge(event.target.value);
@@ -111,7 +101,7 @@ export const Horizontalnav = () => {
             color="inherit"
             aria-label="menu"
           >
-            <img src={logo} className={classes.image} />
+            <img src={logo} className={classes.image} alt="Not loaded" />
           </IconButton>
 
           <Typography variant="h6" className={classes.title}>

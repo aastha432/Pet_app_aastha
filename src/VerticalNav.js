@@ -1,22 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import IconButton from '@material-ui/core/IconButton';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
 
 import {
-  // List,
-  // ListItem,
-  // ListItemText,
-  AppBar,
-  Toolbar,
   Grid,
   Button,
-  Typography,
   makeStyles,
 } from "@material-ui/core";
-import SoundAlarm from "./SoundAlarm";
-import Geofence from "./Geofence";
-import Profile from "./Profile";
 
 
 

@@ -1,6 +1,3 @@
-import React, {useEffect, useState} from "react";
-import Profile from "../Profile";
-import Horizontalnav from "../components/Horizontalnav";
 
 export const signup = user => {
     return fetch(`https://petapp-backend.herokuapp.com/api/auth/signup`, {
@@ -67,7 +64,7 @@ export const signup = user => {
   };
   
   export const isAuthenticated = () => {
-    if (typeof window == "undefined") {
+    if (typeof window === "undefined") {
       return false;
     }
     if (localStorage.getItem("jwt")!=null) 
@@ -88,7 +85,6 @@ export const signup = user => {
       })
         .then(response => {
           return response.json();
-          return <Profile response={response}/>
         })
         .catch(err => console.log(err));
   }

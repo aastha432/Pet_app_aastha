@@ -1,15 +1,17 @@
-import React, {useState} from "react";
 
 export const setDeviceInfo = device => {
-  console.log(device);
+  /*const data= {
+    "petName" : JSON.stringify(device.petName),
+    "IMEI" : JSON.stringify(device.IMEI),
+    "breed" : JSON.stringify(device.breed),
+    "file" : device.file
+  }*/
     return fetch(`https://petapp-backend.herokuapp.com/api/setdeviceinfo`, {
         method: "POST",
         headers: {
-          Accept: "application/json",
-          "Content-Type": "multipart/form-data",
           "authorization": localStorage.getItem("jwt")
         },
-        body: JSON.stringify(device)
+        body: device
       })
         .then(response => {
           return response.json();

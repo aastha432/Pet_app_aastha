@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "./login.css";
-import { Redirect } from "react-router-dom";
 import Link from "@material-ui/core/Link";
 import { Link as LinkRouter } from "react-router-dom";
 import Button from "@material-ui/core/Button";
@@ -21,7 +20,7 @@ const ForgotPassword = () => {
      error : "",
      loading: false,
      didRedirect: false });
-   const { email, error,loading,didRedirect } = details;
+   const { email, error,loading } = details;
 
    const[user, setUser] = useState({
     msg : "",
@@ -47,14 +46,6 @@ const ForgotPassword = () => {
     .catch(err => {console.log("Unsuccessfull in hitting forgotPassword function in userAPIcalls")});
    }
 
-   const performRedirect = () => {
-    if (didRedirect) {
-      return <Redirect to="/Login"/>;
-    }
-    /*if (isAuthenticated()) {
-      return <Redirect to="/Login" />;
-    }*/
-  };
 
   const loadingMessage = () => {
     return (
@@ -109,7 +100,7 @@ const ForgotPassword = () => {
             }}
           >
             <div>
-            <img src={SuccessImage} alt="SuccessImage image not loaded" /> 
+            <img src={SuccessImage} alt="not loaded" /> 
               <p>{`System generated password has been successfully sent to your registered email.`}</p>
               <Button variant="outlined" className={classes.signin}>
                 <Link component={LinkRouter} to="/Login">
@@ -166,11 +157,11 @@ const ForgotPassword = () => {
     <div>
         <div className="flex-container">
           <div className="flex-container2">
-            <img src={dog} className={classes.image} />
+            <img src={dog} className={classes.image} alt="Not loaded" />
           </div>
           <div className={classes.paper}>
             <center>
-            <img src={logo} />
+            <img src={logo} alt="Not loaded"/>
             {loadingMessage()}
             {errorMessage()}
             {successMessage()}

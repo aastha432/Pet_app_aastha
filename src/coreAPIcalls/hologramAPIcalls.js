@@ -1,5 +1,3 @@
-import React, {useState} from "react";
-import WhereisMyPet from "../WhereisMyPet";
 
 export const ListAllDevices = () => {
     return fetch(`https://dashboard.hologram.io/api/1/devices?apikey=3C5RA1S9M8at5M3Ikv3tiTItnUqBBV`, {

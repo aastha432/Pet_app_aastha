@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Profile from "./Profile";
 import Loginform from "./Loginform";
 import logo from "./assets/logo.png";
 import dog from "./assets/dog.png";
@@ -31,8 +30,8 @@ const Loginmain = () => {
   const classes = useStyles();
   const Login = (details) => {
     if (
-      details.name == AdminUser.name &&
-      details.password == AdminUser.password
+      details.name === AdminUser.name &&
+      details.password === AdminUser.password
     ) {
       console.log("logged in");
       setuser({
@@ -57,11 +56,11 @@ const Loginmain = () => {
       ) : (
         <div className="flex-container">
           <div className="flex-container2">
-            <img src={dog} className={classes.image} />
+            <img src={dog} className={classes.image} alt="notloaded" />
           </div>
           <div className={classes.paper}>
-            <img src={logo} />
-            <Loginform Login={Login} error={error} />
+            <img src={logo} alt="notloaded"/>
+            <Loginform Login={Login} error={seterror(error)} />
           </div>
         </div>
       )}

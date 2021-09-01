@@ -1,8 +1,6 @@
-import React, { Component, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import GoogleMapReact from 'google-map-react';
-import {ListAllDevicesLocation, RetrieveDevice, ListAllDevices, ListAllDevicesName, UpdateDevice} from './coreAPIcalls/hologramAPIcalls';
-import AsyncTypeahead from 'react-bootstrap-typeahead';
-import { map } from 'lodash';
+import { RetrieveDevice} from './coreAPIcalls/hologramAPIcalls';
 import Sweet from './assets/Sweet/group-4.png';
 
 
