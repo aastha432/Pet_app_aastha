@@ -31,7 +31,7 @@ const AddNewPet = () => {
     loading: false ,error: false
   });
   const { deviceid,petName, IMEI, breed,loading,error,file,formData} = details;
-  const [devices, setDevices] = useState([]);
+  const [devices, setDevices] = useState([]); //used for preload method
 
   const preload = () => {
     getDeviceInfo().then(data => {
@@ -46,6 +46,7 @@ const AddNewPet = () => {
   useEffect(() => {
     preload();
     setDetails({...details, formData: new FormData()})
+
   }, [petName]);
 
 
@@ -93,15 +94,19 @@ const AddNewPet = () => {
   const onSubmitsetDevice = (event) => {
       event.preventDefault();
       setDetails({ ...details, error: false, loading: true });
+      //setDetails({...details,deviceid: (76845).toString() });
       
       ListAllDevices()
       .then(res => { 
         console.log(res.data);
         res.data.map((holo) => {
           if(holo.imei == IMEI) {
-            console.log(holo.id);
-            setDetails({...details,deviceid: (holo.id).toString() });
+            console.log(holo.id);//fine
+            setDetails({...details,deviceid : (holo.id).toString() }); //problem
+            //setDetails(prevdeatils => ({...prevdeatils, ...details}));    
+            
             formData.set(deviceid, (holo.id).toString());
+            console.log(details);
             console.log(deviceid);
           }
         })
@@ -139,6 +144,7 @@ const AddNewPet = () => {
       const value = common === "file" ? event.target.files[0] : event.target.value;
       formData.set(common, value);
       setDetails({ ...details, [common]: value });
+      console.log(details);
     };
 
   
