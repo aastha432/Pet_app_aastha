@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 export const Horizontalnav = () => {
   const classes = useStyles();
 
-  const [age, setAge] = React.useState('');
+  const [pet, setPet] = React.useState('');
   const [username, setUsername] = React.useState('Aastha');
   const [devices, setDevices] = useState([]);
   const [refresh, serRefresh] = useState(true);
@@ -86,7 +86,8 @@ export const Horizontalnav = () => {
   }
 
   const handleChange = (event) => {
-    setAge(event.target.value);
+
+    setPet(event.target.value);
   };
 
 
@@ -123,14 +124,14 @@ export const Horizontalnav = () => {
         <Select
           labelId="demo-simple-select-outlined-label"
           id="demo-simple-select-outlined"
-          value={age}
+          value={pet}
           onChange={handleChange}
           onClick ={() => refresh? serRefresh(false) : serRefresh(true)}
           onContextMenu
-          label="Age"
+          label="Pet"
         >
           {devices.map((device) => (
-          <MenuItem value={device.petName} /*onClick={() => WhereisMyPet({deviceid : device.deviceid})}*/>
+          <MenuItem value={device.petName} key={device.deviceid}>
             <div className="container">
               <div >
                <img src={device.ImageUrl} alt={Bailey} className={classes.imagereceived}/>

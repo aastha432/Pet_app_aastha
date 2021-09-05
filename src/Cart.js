@@ -1,8 +1,10 @@
 import { Button, Container} from "@material-ui/core";
-import {React, useState} from "react";
+import React, {useState, useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import TextField from "@material-ui/core/TextField";
+import Box from '@material-ui/core/Box';
+
 
 import Icon from '@material-ui/core/Icon';
 import Card from '@material-ui/core/Card';
@@ -14,11 +16,12 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { Redirect,Link } from "react-router-dom";
+import { deleteCartItems, getCartItems, updateCartItems } from "./coreAPIcalls/ecommerceAPIcalls";
 
 
 
 
-const Cart =() =>{ 
+const Cart = () => { 
 
     const useStyles = makeStyles((theme) => ({
         paper: {
@@ -39,12 +42,12 @@ const Cart =() =>{
           margin: theme.spacing(3, 0, 2),
         },
         save: {
-          width: "179px",
+          width: "300px",
           height: "49px",
           margin: "3px 15px 11px 118px",
           padding: "14px 65px 13px 66px",
           borderRadius: "34.5px",
-          backgroundColor: "#4de382",
+          backgroundColor: "green",
           justifyContent: "center",
           color: "#ffffff",
           float: "right",
@@ -79,62 +82,109 @@ const Cart =() =>{
             height: "54px",
             fontSize: "20px",
             color: "#fffff",
+          },
+          delete: {
+            background: "red",
+            padding: "10px",
+            width: "100px",
+            height: "54px",
+            fontSize: "15px",
+            color: "#fffff",
           }
       }));
     
       const classes = useStyles();
-
-      const[state, setState] = useState({toggleswitch : true, count : 0})
-      let {toggleswitch, count} = state;
-    
-      const onSubmit = (event) => {
-        event.preventDefault();
-        const data = {
-          count,
-        };
-      };
-
-    const Product = () => {
-
-    function increase() {
-        setState({
-            ...state,
-            count : count +1
+      const [count,setCount] = useState(0);
+      const[cartProducts, setCartProducts]= useState([]);
+      const [refresh, setRefresh]= useState(false);
+      
+      const preload = () => {
+        getCartItems()
+        .then(data => {
+          setCartProducts(data.msg);
+          console.log(cartProducts);
         })
-        }
-        function decrease() {
-        if (state.count>0){
-            setState({
-            ...state,
-            count : count -1
-            })
-        }
-        }
-        function detleteProduct(){
-            //
-        }
-     return(
-         <div>
-             <br>
-             <h3>Product</h3>
-            <div><Button
-                variant="contained"
-                className={classes.counter}
-                onClick={decrease}
-            >
-                -
-            </Button>
-            <TextField id="outlined-basic" variant="outlined" value={count} onChange={(e) => setState({ ...state, count: e.target.value })}/>
-            <Button
-                onClick={increase}
-                variant="contained"
-                className={classes.counter}
-            >
-                +
-            </Button></div>
-           </br>
-      </div>)
-    }
+        .catch(error => console.log(error));
+      };
+    
+      useEffect(() => {
+        preload();
+      }, [refresh]);
+
+
+
+      const Product= () => {
+
+      const[updateCart, setUpdateCart]= useState([]);
+
+        return (
+          <div>
+          {cartProducts.map((product) => (
+
+            <div style={{ width: '100%' }} key={product.id}>
+            <Box display="flex" p={1} bgcolor="background.paper">
+              <Box p={1} flexGrow={1} bgcolor="grey.300">
+                <h3>Dynamic name</h3>
+              </Box>
+              <Box p={1} bgcolor="grey.300">
+                <h3>Price = {0}</h3>
+              </Box>
+              <Box p={1} bgcolor="grey.300">
+                <Button
+                  variant="contained"
+                  className={classes.counter}
+                  /*onClick={()=>{
+                    product.productquantity= product.productquantity-1;
+                  }}*/
+                >
+                  -
+                </Button>
+                <TextField id="outlined-basic" variant="outlined" value={product.productquantity} 
+                  onChange={()=>{
+                    const productID = {"productid" : product.productid, "productquantity" : product.productquantity}
+                    updateCartItems(productID)
+                    .then(res => {
+                      console.log(res);
+                      //refresh ? setRefresh(false) : setRefresh(true);
+                    })
+                    .catch(error => console.log(error));
+                  }
+                } />
+                <Button
+                  /*onClick={()=>{
+                    product.productquantity = product.productquantity+1;
+                  }}*/
+                  variant="contained"
+                  className={classes.counter}
+                >
+                  +
+                </Button>
+                <Button
+                  onClick={()=>{
+                    const productID = {"productid" : product.productid}
+                    deleteCartItems(productID)
+                    .then(res => {
+                      console.log(res);
+                      refresh ? setRefresh(false) : setRefresh(true);
+                    })
+                    .catch(error => console.log(error));
+                  }}
+                  variant="contained"
+                  className={classes.delete}
+                >
+                  Delete
+                </Button>
+              </Box>
+            </Box>
+          </div>
+          ))}
+         </div> 
+        )
+      }
+
+      const onSubmitOrder = () => {
+          //
+      }
 
     return (
     <div>
@@ -142,13 +192,25 @@ const Cart =() =>{
         <Container component="main" maxWidth="xs">
           <div className={classes.paper}>
                 <h1>My Cart <AddShoppingCartIcon/></h1> 
+                <Button
+                    variant="contained"
+                    color="default"
+                    className={classes.button}
+                >
+                  <Link to="/E_commerce">Back to E-Store
+                  </Link>
+                </Button>
                 <br></br> 
                 <br></br>
                 <br></br>
             </div>
-           <Product/>
         </Container>
-       
+        <Product/>
+        <br></br><br></br><br></br>
+        <h3>Total price = {0}</h3>
+        <Button onClick={onSubmitOrder} variant="contained" className={classes.save}>
+         Place Order
+        </Button>
       </center>
     </div>
     )

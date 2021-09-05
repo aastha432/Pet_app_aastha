@@ -1,5 +1,5 @@
-import { Button, Container} from "@material-ui/core";
-import React from "react";
+import { Box, Button, Container} from "@material-ui/core";
+import React, { useState,useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import Icon from '@material-ui/core/Icon';
@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { Redirect,Link } from "react-router-dom";
+import { addCartItems, getProducts } from "./coreAPIcalls/ecommerceAPIcalls";
 
 
 
@@ -74,34 +75,88 @@ const E_commerce =() =>{
     
       const classes = useStyles();
 
+      const[products, setProducts]= useState([]);
+
+      const preload = () => {
+        getProducts()
+        .then(data => {
+            setProducts(data.msg);
+        })
+        .catch(error => console.log(error));
+      };
+    
+      useEffect(() => {
+        preload();
+      }, []);
+
     const CardCompoment =() => {
 
 
         return  (
-        <Card className={classes.root}>
-        <CardActionArea>
-          <CardMedia
-            className={classes.media}
-            image="https://images.unsplash.com/photo-1618939404235-8747e5c37089?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80"
-            title="Tracking device"
-          />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="h2">
-              Device
-            </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
-              Lorem ipsum ftgiuvnjfgtihiyh Lorem ipsum ftgiuvnjfgtihiyh
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-        <CardActions>
-          <Button size="small" color="primary">
-            Add to Cart
-          </Button>
-        </CardActions>
-      </Card>
+          <div className={classes.root1}>
+          <Grid container spacing={3}>
+            {products.map((product) => (
+              <Grid item xs={4} key={product.productid}>
+                  <Card className={classes.root}>
+                    <CardActionArea>
+                      <CardMedia
+                        className={classes.media}
+                        image={product.productImageURL}
+                        title={product.productname}
+                      />
+                      <CardContent>
+                        <Typography gutterBottom variant="h5" component="h2">
+                          {product.productname}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
+                          {product.productdescription}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                    <CardActions>
+                    <div style={{ width: '100%' }}>
+                      <Box display="flex" justifyContent="center" m={1} p={1}>
+                        <Box p={1}>
+                          <Button size="small" color="primary" onClick= {() => {
+                                const data = {
+                                  "productid": product.productid,
+                                  "productquantity": "1"
+                              }
+                                addCartItems(data)
+                                .then(res => console.log(res))
+                                .catch(error => console.log(error));
+                          }}>
+                            Add to Cart
+                          </Button>
+                        </Box>
+                        <Box p={1}>
+                          <Button size="small" color="secondary">
+                            {product.productcurrency} {product.productrate}
+                          </Button>
+                        </Box>
+                      </Box>
+                    </div>
+                    </CardActions>
+                  </Card>
+              </Grid>
+            ))}
+          </Grid>
+         </div> 
+
     );
     }
+
+
+      const addItemsToCart = (productid)=> {
+        const data = {
+          "productid": productid,
+          "productquantity": "1"
+      }
+        addCartItems(data)
+        .then(res => console.log(res))
+        .catch(error => console.log(error));
+      };
+    
 
 
     return (
@@ -125,28 +180,7 @@ const E_commerce =() =>{
             </div>
            
         </Container>
-        <div className={classes.root1}>
-            <Grid container spacing={3}>
-                <Grid item xs={4}>
-                    <CardCompoment/>
-                </Grid>
-                <Grid item xs={4}>
-                    <CardCompoment/>
-                </Grid>
-                <Grid item xs={4}>
-                    <CardCompoment/>
-                </Grid>
-                <Grid item xs={4}>
-                    <CardCompoment/>
-                </Grid>
-                <Grid item xs={4}>
-                    <CardCompoment/>
-                </Grid>
-                <Grid item xs={4}>
-                    <CardCompoment/>
-                </Grid>
-            </Grid>
-           </div> 
+       <CardCompoment/>
       </center>
     </div>
     )

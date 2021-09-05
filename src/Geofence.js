@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
@@ -8,7 +8,8 @@ import DataService from "./service/Data";
 import { makeStyles } from "@material-ui/core/styles";
 import GoogleMapReact from 'google-map-react';
 import Sweet from './assets/Sweet/group-4.png';
-
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+import {RetrieveDevice} from './coreAPIcalls/hologramAPIcalls';
 
 
 const AnyReactComponent = ({ text }) => (
@@ -27,39 +28,57 @@ const AnyReactComponent = ({ text }) => (
   </div>
 );
 
-const Mapx = (locations) => {
-  let defaultProps = {
-    center: {
-      lat: 30.34,
-      lng: 40.34
-    },
-    zoom: 11
-  };
 
-    return (
-      // Important! Always set the container height explicitly
-      <div style={{ height: '60vh', width: '100%' }}>
-        <GoogleMapReact
-          bootstrapURLKeys={{ key: "AIzaSyBuhUomyWxQBTEeyXUr_7xvq5kU_ghUxE0" }}
-          defaultCenter={defaultProps.center}
-          defaultZoom={defaultProps.zoom}
-        >
-          <AnyReactComponent
-            lat= {30.34}
-            lng={40.34}
-            text={<img src={Sweet} alt="X"/>}
-          />
-        </GoogleMapReact>
-      </div>
-    );
-}
+/*
+Haversine formula to find distance between two points on a sphere
 
+https://www.geeksforgeeks.org/haversine-formula-to-find-distance-between-two-points-on-a-sphere/
+*/
 
 
 
 const Geofence = () => {
   const[state, setState] = useState({toggleswitch : true, count : 0})
   let {toggleswitch, count} = state;
+  const [mylat, setMyLat] = useState(null);
+  const [mylng, setMyLng] = useState(null);
+  const [status, setStatus] = useState(null);
+  const [petlat, setPetLat] = useState(null);
+  const [petlng, setPetLng] = useState(null);
+
+
+  const Mapx = () => {
+    let defaultProps = {
+      center: {
+        lat: mylat,
+        lng: mylng
+      },
+      zoom: 11
+    };
+  
+      return (
+        // Important! Always set the container height explicitly
+        <div style={{ height: '60vh', width: '100%' }}>
+          <GoogleMapReact
+            bootstrapURLKeys={{ key: "AIzaSyBuhUomyWxQBTEeyXUr_7xvq5kU_ghUxE0" }}
+            defaultCenter={defaultProps.center}
+            defaultZoom={defaultProps.zoom}
+          >
+            <AnyReactComponent
+              lat= {mylat}
+              lng={mylng}
+              text={<LocationOnIcon/>}
+            />
+            <AnyReactComponent
+              lat= {petlat}
+              lng={petlng}
+              text={<img src={Sweet} alt="X"/>}
+            />
+          </GoogleMapReact>
+          
+        </div>
+      );
+  }
 
   function increase() {
     setState({
@@ -75,18 +94,79 @@ const Geofence = () => {
       })
     }
   }
+
   function handleToggleSwitch(){
     toggleswitch ? setState({...state,toggleswitch:false}) : setState({...state,toggleswitch:true});
   }
+
+  const getLocation = () => {
+
+    /*Latitude: 13.1252
+    Longitude: 77.5883*/
+
+    if (!navigator.geolocation) {
+      setStatus('Geolocation is not supported by your browser');
+    } else {
+      setStatus('Getting your location ......');
+      navigator.geolocation.getCurrentPosition((position) => {
+        setStatus(null);
+        setMyLat(position.coords.latitude);
+        setMyLng(position.coords.longitude);
+      }, () => {
+        setStatus('Unable to retrieve your location');
+      });
+    }
+  }
+
+  const getPetLocation = (deviceid) => {
+    //deviceid need to be dyanamically set when pet is choosen from Navbar
+    RetrieveDevice(1246634)
+    .then(res => {
+      console.log(`${res.data.lastsession.latitude} of type ${typeof(res.data.lastsession.latitude)}`);
+      console.log(`${res.data.lastsession.longitude} of type ${typeof(res.data.lastsession.longitude)}`);
+      setPetLat(res.data.lastsession.latitude);
+      setPetLng(res.data.lastsession.longitude);
+     }
+   )
+   .catch(err => {console.log(err)});
+  }
+
+  useEffect(() => {
+    getLocation();
+    getPetLocation();
+  }, []);
+
   const onSubmit = (event) => {
     event.preventDefault();
     const data = {
-      count,
-    };
+      "geofence" : count,
+      "distance" : `${Calculations()} km`
+    }
+    console.log(`User current location = ${mylat}(latitude) & ${mylng}(longitude)`);
+    console.log(`Pet current location = ${petlat}(latitude) & ${petlng}(longitude)`);
     console.log(data);
-    DataService.create("geofencdata", data);
-    console.log(`Data sent to server: ${JSON.stringify(data)}`);
+    // API yet to be made
   };
+
+  const Calculations = () => {
+      // distance between latitudes and longitudes
+        let dLat = (petlat - mylat) * Math.PI / 180.0;
+        let dLon = (petlng - mylng) * Math.PI / 180.0;
+           
+        // convert to radiansa
+        let mylat1 = (mylat) * Math.PI / 180.0;
+        let petlat1 = (petlat) * Math.PI / 180.0;
+         
+        // apply formulae
+        let a = Math.pow(Math.sin(dLat / 2), 2) +
+                   Math.pow(Math.sin(dLon / 2), 2) *
+                   Math.cos(mylat1) *
+                   Math.cos(petlat1);
+        let rad = 6371;
+        let c = 2 * Math.asin(Math.sqrt(a));
+        return rad * c;
+  }
+
   const useStyles = makeStyles((theme) => ({
     root: {
       flexGrow: 1,
@@ -112,10 +192,13 @@ const Geofence = () => {
     },
   }));
   const classes = useStyles();
+
+
   return (
     <div>
     <Mapx/>
     <div>
+      <p>{status}</p>
       <h1>Set Geofence</h1>
     <FormGroup row>
       <FormControlLabel
@@ -137,7 +220,7 @@ const Geofence = () => {
       >
         -
       </Button>
-      <TextField id="outlined-basic" variant="outlined" value={count} onChange={(e) => setState({ ...state, count: e.target.value })}/>
+      <TextField id="outlined-basic" variant="outlined" value={`${count}m`} />
       <Button
         onClick={increase}
         variant="contained"

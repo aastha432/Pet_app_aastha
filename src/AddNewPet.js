@@ -27,7 +27,7 @@ const AddNewPet = () => {
     IMEI: "",
     breed: "", 
     file : "", 
-    formData: "",
+    formData: new FormData(),
     loading: false ,error: false
   });
   const { deviceid,petName, IMEI, breed,loading,error,file,formData} = details;
@@ -45,8 +45,7 @@ const AddNewPet = () => {
 
   useEffect(() => {
     preload();
-    setDetails({...details, formData: new FormData()})
-
+    setDetails({...details})
   }, [petName]);
 
 
