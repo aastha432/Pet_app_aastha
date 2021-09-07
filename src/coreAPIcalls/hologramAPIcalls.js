@@ -125,7 +125,19 @@ export const ListAllDevicesLocation = () => {
     .catch(err => {console.log(err)})
   }
 
-
+export const geofenceAPI = (data) => {
+  return fetch(`https://petapp-backend.herokuapp.com/api/trackmypets`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "authorization": localStorage.getItem("jwt")
+    },
+    body : JSON.stringify(data)
+  })
+  .then((res) => {return res.json()})
+  .catch(err => {console.log(err)})
+}
 
 
   

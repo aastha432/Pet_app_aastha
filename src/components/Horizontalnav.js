@@ -21,7 +21,7 @@ import { Link as LinkRouter , Redirect} from "react-router-dom";
 import Link from "@material-ui/core/Link";
 import { signout } from "../coreAPIcalls/userAPIcalls";
 import {getDeviceInfo} from "../coreAPIcalls/deviceAPIcalls"
-import WhereisMyPet from "../WhereisMyPet";
+import {Received} from "../WhereisMyPet";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 export const Horizontalnav = () => {
   const classes = useStyles();
 
-  const [pet, setPet] = React.useState('');
+  const [pet, setPet] = React.useState(null);
   const [username, setUsername] = React.useState('Aastha');
   const [devices, setDevices] = useState([]);
   const [refresh, serRefresh] = useState(true);
@@ -126,12 +126,17 @@ export const Horizontalnav = () => {
           id="demo-simple-select-outlined"
           value={pet}
           onChange={handleChange}
-          onClick ={() => refresh? serRefresh(false) : serRefresh(true)}
+          onClick ={() => {
+            refresh? serRefresh(false) : serRefresh(true)
+            console.log(pet);
+            Received(pet);
+          }
+          }
           onContextMenu
           label="Pet"
         >
           {devices.map((device) => (
-          <MenuItem value={device.petName} key={device.deviceid}>
+          <MenuItem value={device.deviceid} key={device.deviceid}>
             <div className="container">
               <div >
                <img src={device.ImageUrl} alt={Bailey} className={classes.imagereceived}/>

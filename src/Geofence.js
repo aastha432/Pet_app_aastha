@@ -9,8 +9,41 @@ import { makeStyles } from "@material-ui/core/styles";
 import GoogleMapReact from 'google-map-react';
 import Sweet from './assets/Sweet/group-4.png';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
-import {RetrieveDevice} from './coreAPIcalls/hologramAPIcalls';
+import {RetrieveDevice, geofenceAPI} from './coreAPIcalls/hologramAPIcalls';
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getMessaging, getToken } from "firebase/messaging";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDdBNU_IS_i3cL25e5WaMGnYE9jaVRnVFQ", 
+  authDomain: "pet-app-web.firebaseapp.com",
+  projectId: "pet-app-web",
+  storageBucket: "pet-app-web.appspot.com",
+  messagingSenderId: "478684241434",
+  appId: "1:478684241434:web:12406d7fd0b3d88614bba3",
+  measurementId: "G-10909J9J6M"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const messaging = getMessaging();
+
+
+const Geofence = () => {
+  const[state, setState] = useState({toggleswitch : true, count : 0})
+  let {toggleswitch, count} = state;
+  const [mylat, setMyLat] = useState(null);
+  const [mylng, setMyLng] = useState(null);
+  const [status, setStatus] = useState(null);
+  const [petlat, setPetLat] = useState(null);
+  const [petlng, setPetLng] = useState(null);
 
 const AnyReactComponent = ({ text }) => (
   <div style={{
@@ -27,25 +60,6 @@ const AnyReactComponent = ({ text }) => (
     {text}
   </div>
 );
-
-
-/*
-Haversine formula to find distance between two points on a sphere
-
-https://www.geeksforgeeks.org/haversine-formula-to-find-distance-between-two-points-on-a-sphere/
-*/
-
-
-
-const Geofence = () => {
-  const[state, setState] = useState({toggleswitch : true, count : 0})
-  let {toggleswitch, count} = state;
-  const [mylat, setMyLat] = useState(null);
-  const [mylng, setMyLng] = useState(null);
-  const [status, setStatus] = useState(null);
-  const [petlat, setPetLat] = useState(null);
-  const [petlng, setPetLng] = useState(null);
-
 
   const Mapx = () => {
     let defaultProps = {
@@ -99,7 +113,7 @@ const Geofence = () => {
     toggleswitch ? setState({...state,toggleswitch:false}) : setState({...state,toggleswitch:true});
   }
 
-  const getLocation = () => {
+  const getMyLocation = () => {
 
     /*Latitude: 13.1252
     Longitude: 77.5883*/
@@ -132,40 +146,50 @@ const Geofence = () => {
   }
 
   useEffect(() => {
-    getLocation();
     getPetLocation();
+    getMyLocation();
   }, []);
 
   const onSubmit = (event) => {
+
     event.preventDefault();
-    const data = {
-      "geofence" : count,
-      "distance" : `${Calculations()} km`
-    }
-    console.log(`User current location = ${mylat}(latitude) & ${mylng}(longitude)`);
-    console.log(`Pet current location = ${petlat}(latitude) & ${petlng}(longitude)`);
-    console.log(data);
-    // API yet to be made
+    // Get registration token. Initially this makes a network call, once retrieved
+    // subsequent calls to getToken will return from cache.
+    getToken(messaging, { vapidKey: 'BNVVINY7dP7I1v_SDjl9DFphq-k8KeZJV87fzwrgetrIGYHTc2_MHDEy0PhjDbqnYq05BPVBuqFJ_Kg6fRYy7oE' })
+    .then((currentToken) => {
+      if (currentToken) {
+        // Send the token to your server and update the UI if necessary
+        const data = {
+          "userLat": `${mylat}`,
+          "userLong":`${mylng}`,
+          "userGeoFence":`${count}`,
+          "fcmtoken": `${currentToken}`
+      }
+        geofenceAPI(data)
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
+
+      } else {
+        // Show permission request UI
+        console.log('No registration token available. Request permission to generate one.');
+        // ...
+      }
+    }).catch((err) => {
+      console.log(err);
+      // ...
+    });
+    
   };
 
-  const Calculations = () => {
-      // distance between latitudes and longitudes
-        let dLat = (petlat - mylat) * Math.PI / 180.0;
-        let dLon = (petlng - mylng) * Math.PI / 180.0;
-           
-        // convert to radiansa
-        let mylat1 = (mylat) * Math.PI / 180.0;
-        let petlat1 = (petlat) * Math.PI / 180.0;
-         
-        // apply formulae
-        let a = Math.pow(Math.sin(dLat / 2), 2) +
-                   Math.pow(Math.sin(dLon / 2), 2) *
-                   Math.cos(mylat1) *
-                   Math.cos(petlat1);
-        let rad = 6371;
-        let c = 2 * Math.asin(Math.sqrt(a));
-        return rad * c;
-  }
+  /*const onSubmit = (event) => {
+
+    event.preventDefault();
+    // Get registration token. Initially this makes a network call, once retrieved
+    // subsequent calls to getToken will return from cache.
+    hitfirebase(mylat,mylng,count)
+    .then(console.log("Success hitting firebase"))
+    .catch(console.log("No Success hitting firebase"));
+  };*/
 
   const useStyles = makeStyles((theme) => ({
     root: {

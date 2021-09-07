@@ -24,11 +24,17 @@ const AnyReactComponent = ({ text }) => (
     </div>
   );
 
+export const Received = (deviceid) => {
+    console.log(deviceid);
+    return deviceid;
+  }
 
-const WhereisMyPet = (deviceid) => {
+const WhereisMyPet = () => {
 
   const [petlat, setPetLat] = useState(null);
   const [petlng, setPetLng] = useState(null);
+  const [deviceid, setDeviceid] = useState(Received());
+  //1246634
 
   const preload =() => {
     RetrieveDevice(1246634)
