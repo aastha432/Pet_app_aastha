@@ -97,7 +97,11 @@ const Cart = () => {
       const classes = useStyles();
       const [count,setCount] = useState(0);
       const[cartProducts, setCartProducts]= useState([]);
-      const[cartProductsDetails, setCartProductsDetails] = useState([]);
+      const[cartProductsDetails, setCartProductsDetails] = useState({
+        "productname" : "not loaded",
+        "productcurrency": "not",
+        "productrate": 0,
+      });
       const [refresh, setRefresh]= useState(false);
       const[total, setTotal] = useState(0);
 
@@ -105,39 +109,35 @@ const Cart = () => {
         getCartItems()
         .then(data => {
           setCartProducts(data.msg);
-          console.log(cartProducts);
         })
         .catch(error => console.log(error));
       };
     
 
-      const populateCartProductsDetails = () => {
-        let response = null;
-        console.log(response);
+      const retrieveInfo = (productid) => {
 
-        cartProducts.forEach((product) => {
-          //not working
-          console.log(product.prouctid);
-
-          getaProduct(product.productid)
-          .then(res => {response = res;})
+          getaProduct(productid)
+          .then(res => {setCartProductsDetails({
+            ...cartProductsDetails,
+            "productname" : res.productname,
+            "productcurrency": res.productcurrency,
+            "productrate": res.productrate
+          })
+          })
           .catch(err => console.log(err));
 
-          setCartProductsDetails(prevItems => [...prevItems, {
+          /*setCartProductsDetails(prevItems => [...prevItems, {
             "productid" : product.productid,
             "productquantity" : product.productquantity,
             "productname" : response.productname,
             "productcurrency": response.productcurrency,
             "productrate": response.productrate,
-          }]);
-          console.log(cartProductsDetails);
-          })
+          }]);*/
 
       }
 
       useEffect(() => {
           preload();
-          populateCartProductsDetails();
       }, [refresh]);
 
 
@@ -145,43 +145,52 @@ const Cart = () => {
 
         return (
           <div>
-          {cartProductsDetails.map((product) => (
+          {cartProducts.map((product) => (
 
+            
             <div style={{ width: '100%' }} key={product.id}>
+              {retrieveInfo(product.productid)}
             <Box display="flex" p={1} bgcolor="background.paper">
               <Box p={1} flexGrow={1} bgcolor="grey.300">
-                <h3>{product.productname}</h3>
+                <h3>{cartProductsDetails.productname}</h3>
               </Box>
               <Box p={1} bgcolor="grey.300">
-                <h3>Price = {product.productrate * product.productquantity}</h3> 
+                <h3>Price = {cartProductsDetails.productrate * cartProductsDetails.productquantity}</h3> 
                 {()=> {
                   setTotal(
-                    total = total + (product.productrate * product.productquantity)
+                    total = total + (cartProductsDetails.productrate * cartProductsDetails.productquantity)
                   )
                 }}
               </Box>
               <Box p={1} bgcolor="grey.300">
                 <Button
+                  onClick={()=>{
+                    const productID = {"productid" : product.productid, "productquantity" : product.productquantity - 1}
+                    updateCartItems(productID)
+                    .then(res => {
+                      console.log(res);
+                      // Array -> element -> decrement productquantity
+                      //refresh ? setRefresh(false) : setRefresh(true);
+                    })
+                    .catch(error => console.log(error));
+                  }}
                   variant="contained"
                   className={classes.counter}
                 >
                   -
                 </Button>
-                <TextField id="outlined-basic" variant="outlined" value={product.productquantity} 
-                  onChange={()=>{
-                    const productID = {"productid" : product.productid, "productquantity" : product.productquantity}
+                <TextField id="outlined-basic" variant="outlined" value={product.productquantity}  />
+                <Button
+                  onClick={()=>{
+                    const productID = {"productid" : product.productid, "productquantity" : product.productquantity + 1}
                     updateCartItems(productID)
                     .then(res => {
                       console.log(res);
+                      // Array -> element -> increment productquantity
                       //refresh ? setRefresh(false) : setRefresh(true);
                     })
                     .catch(error => console.log(error));
-                  }
-                } />
-                <Button
-                  /*onClick={()=>{
-                    product.productquantity = product.productquantity+1;
-                  }}*/
+                  }}
                   variant="contained"
                   className={classes.counter}
                 >

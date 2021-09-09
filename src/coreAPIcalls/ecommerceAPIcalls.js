@@ -96,3 +96,20 @@ export const getCartItems = () => {
         })
         .catch(err => console.log(err));
   }
+
+  export const createOrder = order => {
+    console.log(order);
+    return fetch(`https://petapp-backend.herokuapp.com/api/payment/createorder`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "authorization": localStorage.getItem("jwt")
+        },
+        body: JSON.stringify(order)
+      })
+        .then(response => {
+          return response.json();
+        })
+        .catch(err => console.log(err));
+  }

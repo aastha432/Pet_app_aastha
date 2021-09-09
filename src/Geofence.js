@@ -146,7 +146,7 @@ const AnyReactComponent = ({ text }) => (
         const data = {
           "userLat": `${mylat}`,
           "userLong":`${mylng}`,
-          "userGeoFence":`${count}`,
+          "userGeoFence":`${count*0.001}`,
           "fcmtoken": `${currentToken}`
       }
         geofenceAPI(data)
