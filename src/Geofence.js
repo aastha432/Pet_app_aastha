@@ -11,29 +11,11 @@ import Sweet from './assets/Sweet/group-4.png';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import {RetrieveDevice, geofenceAPI} from './coreAPIcalls/hologramAPIcalls';
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+//firebase
 import { getMessaging, getToken } from "firebase/messaging";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDdBNU_IS_i3cL25e5WaMGnYE9jaVRnVFQ", 
-  authDomain: "pet-app-web.firebaseapp.com",
-  projectId: "pet-app-web",
-  storageBucket: "pet-app-web.appspot.com",
-  messagingSenderId: "478684241434",
-  appId: "1:478684241434:web:12406d7fd0b3d88614bba3",
-  measurementId: "G-10909J9J6M"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+import firebase from "./firebase";
 const messaging = getMessaging();
+
 
 
 const Geofence = () => {
@@ -155,9 +137,11 @@ const AnyReactComponent = ({ text }) => (
     event.preventDefault();
     // Get registration token. Initially this makes a network call, once retrieved
     // subsequent calls to getToken will return from cache.
-    getToken(messaging, { vapidKey: 'BNVVINY7dP7I1v_SDjl9DFphq-k8KeZJV87fzwrgetrIGYHTc2_MHDEy0PhjDbqnYq05BPVBuqFJ_Kg6fRYy7oE' })
+    
+    getToken(messaging, { vapidKey: 'BAjlMLGXyUHx0qALVOfnSvHvV8J8hd5nuniTzhvL5qS_RJCw1mzdKwnSczUj1HQWeq6dAbOaSsILxf1Sj0-7gjY' })
     .then((currentToken) => {
       if (currentToken) {
+        console.log(currentToken);
         // Send the token to your server and update the UI if necessary
         const data = {
           "userLat": `${mylat}`,
@@ -181,15 +165,6 @@ const AnyReactComponent = ({ text }) => (
     
   };
 
-  /*const onSubmit = (event) => {
-
-    event.preventDefault();
-    // Get registration token. Initially this makes a network call, once retrieved
-    // subsequent calls to getToken will return from cache.
-    hitfirebase(mylat,mylng,count)
-    .then(console.log("Success hitting firebase"))
-    .catch(console.log("No Success hitting firebase"));
-  };*/
 
   const useStyles = makeStyles((theme) => ({
     root: {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "fontsource-roboto";
 import Home from "./Home";
@@ -10,14 +10,22 @@ import Navbar from "./Navbar";
 import PrivateRoute from "./PrivateRoutes";
 import ForgotPassword from "./ForgotPassword";
 import E_commerce from "./E_commerce";
+import firebase from "./firebase";
 
 // import DataService from "./services/Data";
 
 const App = () => {
-  // useEffect(() => {
-  //   console.log("effect");
-  //   DataService.getAll("usersData").then((response) => console.log(response));
-  // }, []);
+  
+  useEffect(() => {
+    /*const messaging = firebase.messaging();
+    messaging.requestPermission()
+    .then(()=> {
+      return messaging.getToken()
+    }).then(token => {
+      console.log("Token : ",token);
+    })
+    .catch((err)=> console.log(err));*/
+  }, []);
 
   return (
     <Router>

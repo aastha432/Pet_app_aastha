@@ -22,7 +22,6 @@ import {ListAllDevices, UpdateDevice} from "./coreAPIcalls/hologramAPIcalls"
 const AddNewPet = () => {
 
   const [details, setDetails] = useState({
-    deviceid: "",
     petName: "",
     IMEI: "",
     breed: "", 
@@ -30,7 +29,8 @@ const AddNewPet = () => {
     formData: new FormData(),
     loading: false ,error: false
   });
-  const { deviceid,petName, IMEI, breed,loading,error,file,formData} = details;
+  const {petName, IMEI, breed,loading,error,file,formData} = details;
+  const [deviceid, setDeviceID] = useState("1246634");
   const [devices, setDevices] = useState([]); //used for preload method
 
   const preload = () => {
@@ -91,6 +91,7 @@ const AddNewPet = () => {
   
   
   const onSubmitsetDevice = (event) => {
+
       event.preventDefault();
       setDetails({ ...details, error: false, loading: true });
       //setDetails({...details,deviceid: (76845).toString() });
@@ -101,24 +102,27 @@ const AddNewPet = () => {
         res.data.map((holo) => {
           if(holo.imei == IMEI) {
             console.log(holo.id);//fine
-            setDetails({...details,deviceid : (holo.id).toString() }); //problem
+            setDeviceID(holo.id)
             //setDetails(prevdeatils => ({...prevdeatils, ...details}));    
-            
-            formData.set(deviceid, (holo.id).toString());
-            console.log(details);
+            formData.set("deviceid", `${deviceid}`);
             console.log(deviceid);
           }
         })
       })
       .catch(err => {console.log(err)});
 
-      UpdateDevice(parseInt(deviceid),petName)
+
+
+      UpdateDevice(deviceid,petName)
       .then(res => {
         console.log("Successfull in hitting UpdateDevice function in hologramAPIcalls");
       })
       .catch(err => console.log(err));
 
-     
+
+
+
+     console.log(formData);
       setDeviceInfo(formData)
       .then(res => {  
         if (res.error) {
@@ -129,9 +133,9 @@ const AddNewPet = () => {
           petName: "",
           IMEI: "",
           breed: "",
-          deviceid: "",
           file : ""
-        })
+        });
+        setDeviceID(null);
         console.log("Successfull in hitting setDeviceInfo function in deviceAPIcalls");
         }}
       )
@@ -139,11 +143,15 @@ const AddNewPet = () => {
 
     };
 
+
+
+
     const handleChange = common => event => {
       const value = common === "file" ? event.target.files[0] : event.target.value;
       formData.set(common, value);
       setDetails({ ...details, [common]: value });
       console.log(details);
+      console.log(formData.getAll(common));
     };
 
   

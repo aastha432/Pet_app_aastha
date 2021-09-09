@@ -91,6 +91,7 @@ export const getCartItems = () => {
         body: JSON.stringify(productid)
       })
         .then(response => {
+          console.log(response);
             return response.json();
         })
         .catch(err => console.log(err));

@@ -16,7 +16,8 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { Redirect,Link } from "react-router-dom";
-import { deleteCartItems, getCartItems, updateCartItems } from "./coreAPIcalls/ecommerceAPIcalls";
+import { deleteCartItems, getaProduct, getCartItems, updateCartItems } from "./coreAPIcalls/ecommerceAPIcalls";
+import { forEach } from "lodash";
 
 
 
@@ -96,8 +97,10 @@ const Cart = () => {
       const classes = useStyles();
       const [count,setCount] = useState(0);
       const[cartProducts, setCartProducts]= useState([]);
+      const[cartProductsDetails, setCartProductsDetails] = useState([]);
       const [refresh, setRefresh]= useState(false);
-      
+      const[total, setTotal] = useState(0);
+
       const preload = () => {
         getCartItems()
         .then(data => {
@@ -107,35 +110,60 @@ const Cart = () => {
         .catch(error => console.log(error));
       };
     
-      useEffect(() => {
-        preload();
-      }, [refresh]);
 
+      const populateCartProductsDetails = () => {
+        let response = null;
+        console.log(response);
+
+        cartProducts.forEach((product) => {
+          //not working
+          console.log(product.prouctid);
+
+          getaProduct(product.productid)
+          .then(res => {response = res;})
+          .catch(err => console.log(err));
+
+          setCartProductsDetails(prevItems => [...prevItems, {
+            "productid" : product.productid,
+            "productquantity" : product.productquantity,
+            "productname" : response.productname,
+            "productcurrency": response.productcurrency,
+            "productrate": response.productrate,
+          }]);
+          console.log(cartProductsDetails);
+          })
+
+      }
+
+      useEffect(() => {
+          preload();
+          populateCartProductsDetails();
+      }, [refresh]);
 
 
       const Product= () => {
 
-      const[updateCart, setUpdateCart]= useState([]);
-
         return (
           <div>
-          {cartProducts.map((product) => (
+          {cartProductsDetails.map((product) => (
 
             <div style={{ width: '100%' }} key={product.id}>
             <Box display="flex" p={1} bgcolor="background.paper">
               <Box p={1} flexGrow={1} bgcolor="grey.300">
-                <h3>Dynamic name</h3>
+                <h3>{product.productname}</h3>
               </Box>
               <Box p={1} bgcolor="grey.300">
-                <h3>Price = {0}</h3>
+                <h3>Price = {product.productrate * product.productquantity}</h3> 
+                {()=> {
+                  setTotal(
+                    total = total + (product.productrate * product.productquantity)
+                  )
+                }}
               </Box>
               <Box p={1} bgcolor="grey.300">
                 <Button
                   variant="contained"
                   className={classes.counter}
-                  /*onClick={()=>{
-                    product.productquantity= product.productquantity-1;
-                  }}*/
                 >
                   -
                 </Button>
@@ -207,7 +235,7 @@ const Cart = () => {
         </Container>
         <Product/>
         <br></br><br></br><br></br>
-        <h3>Total price = {0}</h3>
+        <h3>Total price = {total}</h3>
         <Button onClick={onSubmitOrder} variant="contained" className={classes.save}>
          Place Order
         </Button>

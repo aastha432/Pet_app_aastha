@@ -5,11 +5,11 @@ export const setDeviceInfo = device => {
     return fetch(`https://petapp-backend.herokuapp.com/api/setdeviceinfo`, {
         method: "POST",
         headers: {
-          Accept: "application/json",
-          "Content-Type": "multipart/form-data",
+          //Accept: "application/json",
+          //"Content-Type": "multipart/form-data",
           "authorization": localStorage.getItem("jwt")
         },
-        body: JSON.stringify(device)
+        body: device
       })
         .then(response => {
           return response.json();

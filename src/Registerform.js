@@ -17,7 +17,7 @@ import logo from "./assets/logo.png";
 import { Link as LinkRouter } from "react-router-dom";
 import "./login.css";
 import DataService from "./service/Data";
-import { signup } from "./coreAPIcalls/userAPIcalls";
+import { signup , signin} from "./coreAPIcalls/userAPIcalls";
 import BeanEater from "./assets/BeanEater.gif";
 import SuccessImage from './assets/successfulregistration.png'
 
@@ -28,9 +28,11 @@ const Registerform = () => {
   const[user, setUser] = useState({
     username : "",
     msg : "",
-    useremail : ""
+    useremail : "",
+    userpassword : "",
+    auth : false
   })
-  const {msg, useremail, username} = user;
+  const {msg, useremail, username,userpassword,auth} = user;
 
   const [details, setDetails] = useState({
      name:"", 
@@ -42,6 +44,7 @@ const Registerform = () => {
     });
   const { name, email, password,error,loading, show } = details;
 
+
   const onSubmit = (event) => {
     event.preventDefault();
     setDetails({ ...details, error: false, loading: true });
@@ -50,14 +53,15 @@ const Registerform = () => {
       if (res.error) {
         setDetails({ ...details, error: res.error, loading: false });}
       else {
-      setUser({...user,msg: res.msg, useremail: res.email, username: res.name});
+      setUser({...user,msg: res.msg, useremail: res.email, username: res.name, userpassword: password});
       setDetails({
         ...details,
         name: "",
         email:"",
         password:"",
       })}
-      console.log("Successfull in hitting signup function in userAPIcalls")
+      console.log("Successfull in hitting signup function in userAPIcalls");
+      setTimeout(ContinuousHittingOfSignin, 2000);
       }
     )
     .catch(err => {console.log("Unsuccessfull in hitting signup function in userAPIcalls")});
@@ -125,6 +129,22 @@ const Registerform = () => {
     );
   };
 
+  const ContinuousHittingOfSignin = () => {
+    console.log(user);
+    const data = {
+      "email": useremail,
+      "password": userpassword
+    }
+    console.log(data);
+    signin(data)
+    .then((res) => {
+      if(res.auth)
+        setUser({...user, auth : true});
+      console.log(res);
+    })
+    .catch((err) => console.log(err));
+  }
+
   const useStyles = makeStyles((theme) => ({
     paper: {
       marginTop: theme.spacing(8),
@@ -166,6 +186,7 @@ const Registerform = () => {
   const classes = useStyles();
 
   return (
+    auth ? <Redirect to='/Navbar'/> : 
     <center>
       <Container component="main" maxWidth="xs">
         <div className={classes.paper}>
