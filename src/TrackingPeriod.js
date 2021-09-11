@@ -11,6 +11,7 @@ import FormLabel from "@material-ui/core/FormLabel";
 import Button from "@material-ui/core/Button";
 import "./login.css";
 import DataService from "./service/Data";
+import { trackingPeriod } from "./WhereisMyPet";
 
 const TrackingPeriod = () => {
   const useStyles = makeStyles((theme) => ({
@@ -35,19 +36,17 @@ const TrackingPeriod = () => {
     },
   }));
 
-  const [selectedValue, setSelectedValue] = React.useState("a");
+  const [selectedValue, setSelectedValue] = React.useState("normal");
 
   const handleChange = (event) => {
-    setSelectedValue({ selectedValue: event.target.value });
+    setSelectedValue(event.target.value);
   };
   const onSubmit = (event) => {
     event.preventDefault();
-    const data = {
-      selectedValue,
-    };
+    const data = selectedValue;
     console.log(data);
-    DataService.create("modeData", data);
-    console.log(`Data sent to server: ${JSON.stringify(data)}`);
+    trackingPeriod(data);
+    //API to be made
   };
 
   const classes = useStyles();
@@ -57,56 +56,20 @@ const TrackingPeriod = () => {
         <img src={trackingmode} className={classes.trackingmodei} />
         <br></br>
 
-        <Grid container>
-          <Grid item xs={6}>
-            <Radio
-              checked={selectedValue === "a"}
-              onChange={handleChange}
-              value="b"
-              name="radio-button-demo"
-              inputProps={{ "aria-label": "A" }}
-              labelPlacement="start"
-              className={classes.radiob}
-            />
-            <label className="modes">
-              Normal Mode
-              <p>Update every 10 min</p>
-            </label>
-          </Grid>
-          <Grid item xs={6}>
-            <div>
-              <Radio
-                onChange={handleChange}
-                value="b"
-                name="radio-button-demo"
-                inputProps={{ "aria-label": "A" }}
-                labelPlacement="start"
-              />
-              <label className="modes">
-                Power Saving Mode
-                <p>Update every hour</p>
-              </label>
-            </div>
-          </Grid>
-        </Grid>
+          <FormControl component="fieldset">
+          <FormLabel component="legend">Tracking modes</FormLabel>
+          <RadioGroup aria-label="tracking mode" name="gender1" value={selectedValue} onChange={handleChange}>
+
+            <FormControlLabel value="normal" control={<Radio />} label="Normal Mode (Update every 10 min)" />
+            <FormControlLabel value="power saving" control={<Radio />} label="Power Saving Mode (Update every hour)" />
+            <FormControlLabel value="tracking" control={<Radio />} label="Tracking Mode (Update every minute)" />
+          
+          </RadioGroup>
+          </FormControl>
+
+
         <br></br>
         <br></br>
-        <Grid container>
-          <Grid item xs={6}>
-            <div>
-              <Radio
-                onChange={handleChange}
-                value="c"
-                name="radio-button-demo"
-                labelPlacement="start"
-              />
-              <label className="modes">
-                Tracking Mode
-                <p>Update every minute</p>
-              </label>
-            </div>
-          </Grid>
-        </Grid>
       </center>
       <Button
         variant="outlined"

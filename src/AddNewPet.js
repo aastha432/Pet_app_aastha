@@ -30,7 +30,6 @@ const AddNewPet = () => {
     loading: false ,error: false
   });
   const {petName, IMEI, breed,loading,error,file,formData} = details;
-  const [deviceid, setDeviceID] = useState("1246634");
   const [devices, setDevices] = useState([]); //used for preload method
 
   const preload = () => {
@@ -94,52 +93,48 @@ const AddNewPet = () => {
 
       event.preventDefault();
       setDetails({ ...details, error: false, loading: true });
-      //setDetails({...details,deviceid: (76845).toString() });
       
+      //all good
       ListAllDevices()
       .then(res => { 
         console.log(res.data);
         res.data.map((holo) => {
           if(holo.imei == IMEI) {
-            console.log(holo.id);//fine
-            setDeviceID(holo.id)
-            //setDetails(prevdeatils => ({...prevdeatils, ...details}));    
-            formData.set("deviceid", `${deviceid}`);
-            console.log(deviceid);
+            console.log("holo.id = ",holo.id);//fine
+            formData.set("deviceid", holo.id);
+            console.log("formData.get() = ",formData.get("deviceid"));
+            console.log("typeof formData.get() = ",typeof(formData.get("deviceid")));
+
+            //working fine
+            UpdateDevice(parseInt(formData.get("deviceid")),petName)
+            .then(res => {
+              console.log(res);
+            })
+            .catch(err => console.log(err));
+
+
+            setDeviceInfo(formData)
+            .then(res => {  
+              if (res.error) {
+                setDetails({ ...details, error: res.error, loading: false });}
+              else {   
+              setDetails({
+                ...details,
+                petName: "",
+                IMEI: "",
+                breed: "",
+                file : ""
+              });
+              console.log("Successfull in hitting setDeviceInfo function in deviceAPIcalls");
+              }}
+            )
+            .catch(err => {console.log(err)})
+
           }
         })
       })
       .catch(err => {console.log(err)});
 
-
-
-      UpdateDevice(deviceid,petName)
-      .then(res => {
-        console.log("Successfull in hitting UpdateDevice function in hologramAPIcalls");
-      })
-      .catch(err => console.log(err));
-
-
-
-
-     console.log(formData);
-      setDeviceInfo(formData)
-      .then(res => {  
-        if (res.error) {
-          setDetails({ ...details, error: res.error, loading: false });}
-        else {   
-        setDetails({
-          ...details,
-          petName: "",
-          IMEI: "",
-          breed: "",
-          file : ""
-        });
-        setDeviceID(null);
-        console.log("Successfull in hitting setDeviceInfo function in deviceAPIcalls");
-        }}
-      )
-      .catch(err => {console.log(err)})
 
     };
 

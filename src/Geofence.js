@@ -79,14 +79,14 @@ const AnyReactComponent = ({ text }) => (
   function increase() {
     setState({
       ...state,
-      count : count +1
+      count : count +5
     })
   }
   function decrease() {
     if (state.count>0){
       setState({
         ...state,
-        count : count -1
+        count : count -5
       })
     }
   }
@@ -146,7 +146,7 @@ const AnyReactComponent = ({ text }) => (
         const data = {
           "userLat": `${mylat}`,
           "userLong":`${mylng}`,
-          "userGeoFence":`${count*0.001}`,
+          "userGeoFence":`${Math.round((count*0.001) * 1000) / 1000}`,
           "fcmtoken": `${currentToken}`
       }
         geofenceAPI(data)

@@ -38,13 +38,14 @@ export const ListAllDevicesLocation = () => {
   }
 
   export const UpdateDevice = (deviceid, device) => {
+    const name ={"name" : device};
     return fetch(`https://dashboard.hologram.io/api/1/devices/${deviceid}?apikey=3C5RA1S9M8at5M3Ikv3tiTItnUqBBV&orgid=40962`, {
       method: "PUT",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       },
-      body : JSON.stringify(device)
+      body : JSON.stringify(name)
     })
     .then((res) => {return res.json()})
     .catch(err => {console.log(err)})

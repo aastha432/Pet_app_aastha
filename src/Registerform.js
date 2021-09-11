@@ -17,9 +17,10 @@ import logo from "./assets/logo.png";
 import { Link as LinkRouter } from "react-router-dom";
 import "./login.css";
 import DataService from "./service/Data";
-import { signup , signin} from "./coreAPIcalls/userAPIcalls";
+import { signup , signin, authenticate} from "./coreAPIcalls/userAPIcalls";
 import BeanEater from "./assets/BeanEater.gif";
 import SuccessImage from './assets/successfulregistration.png'
+import WhereisMyPet from "./WhereisMyPet";
 
 
 
@@ -29,7 +30,6 @@ const Registerform = () => {
     username : "",
     msg : "",
     useremail : "",
-    userpassword : "",
     auth : false
   })
   const {msg, useremail, username,userpassword,auth} = user;
@@ -39,11 +39,11 @@ const Registerform = () => {
      email: "",
      password: "" ,
      error : "",
+     formData: new FormData(),
      loading: false,
      show: false
     });
-  const { name, email, password,error,loading, show } = details;
-
+  const { name, email, password,error,loading, show ,formData} = details;
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -53,19 +53,23 @@ const Registerform = () => {
       if (res.error) {
         setDetails({ ...details, error: res.error, loading: false });}
       else {
-      setUser({...user,msg: res.msg, useremail: res.email, username: res.name, userpassword: password});
+      setUser({...user,msg: res.msg, useremail: res.email, username: res.name});
+      formData.set("email", res.email);
+      formData.set("password", password);
       setDetails({
         ...details,
-        name: "",
+        name: "", 
         email:"",
         password:"",
       })}
-      console.log("Successfull in hitting signup function in userAPIcalls");
-      setTimeout(ContinuousHittingOfSignin, 2000);
-      }
+      console.log("Successfull in hitting signup function in userAPIcalls");    
+      const timer = setInterval(ContinuousHittingOfSignin, 2000);
+      WhereisMyPet({timer : timer});
+    }
     )
     .catch(err => {console.log("Unsuccessfull in hitting signup function in userAPIcalls")});
   };
+
 
   const loadingMessage = () => {
     return (
@@ -130,16 +134,22 @@ const Registerform = () => {
   };
 
   const ContinuousHittingOfSignin = () => {
-    console.log(user);
+    console.log(formData);
     const data = {
-      "email": useremail,
-      "password": userpassword
+      "email": formData.get("email"),
+      "password": formData.get("password")
     }
     console.log(data);
     signin(data)
     .then((res) => {
-      if(res.auth)
+      if(res.auth){
         setUser({...user, auth : true});
+        authenticate(res,() => { 
+           formData.set("email","");
+           formData.set("password","");
+        })
+      }
+        
       console.log(res);
     })
     .catch((err) => console.log(err));

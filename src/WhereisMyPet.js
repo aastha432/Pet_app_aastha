@@ -29,18 +29,24 @@ export const Received = (deviceid) => {
     return deviceid;
   }
 
-const WhereisMyPet = () => {
+export const trackingPeriod = (period) => {
+  console.log(`Period = ${period}`);
+  return period;
+}
+
+const WhereisMyPet = (timer) => {
 
   const [petlat, setPetLat] = useState(null);
   const [petlng, setPetLng] = useState(null);
   const [deviceid, setDeviceid] = useState(Received());
+  const [period, setPeriod] = useState(trackingPeriod());
   //1246634
 
   const preload =() => {
     RetrieveDevice(1246634)
     .then(res => {
-      console.log(`${res.data.lastsession.latitude} of type ${typeof(res.data.lastsession.latitude)}`);
-      console.log(`${res.data.lastsession.longitude} of type ${typeof(res.data.lastsession.longitude)}`);
+      console.log(`${res.data.lastsession.latitude} pet lat`);
+      console.log(`${res.data.lastsession.longitude} pet lng`);
       setPetLat(res.data.lastsession.latitude);
       setPetLng(res.data.lastsession.longitude);
      }
@@ -49,15 +55,26 @@ const WhereisMyPet = () => {
 }
 
   useEffect(() => {
-    preload();
-  },[])
+    if(period=="tracking")
+      setInterval(preload,1000);
+    else if(period=="normal")
+      setInterval(preload,10000);
+    else if (period=="power saving")
+      setInterval(preload,60000);
+    else
+      preload();
+
+
+    //ContinuousSignin timer
+    clearInterval(timer);
+  },[period])
 
   let defaultProps = {
       center: {
         lat: 25.181,
         lng: 55.225
       },
-      zoom: 11
+      zoom: 2
     };
 
       return (
