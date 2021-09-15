@@ -19,6 +19,8 @@ import { signin , isAuthenticated, authenticate} from "./coreAPIcalls/userAPIcal
 import PrivateRoute from "./PrivateRoutes";
 import {Horizontalnav} from "./components/Horizontalnav";
 import ForgotPassword from './ForgotPassword'
+import { useDispatch } from "react-redux";
+import { logged_in_user } from "./redux/actions/usernameAction";
 
 const Loginform = () => {
   const [details, setDetails] = useState({
@@ -29,10 +31,13 @@ const Loginform = () => {
      didRedirect: false
     });
   const { email, password, error, loading,didRedirect} = details;
+  const dispatch = useDispatch(); //redux
 
   const submitHandler = (e) => {
+
     e.preventDefault();
     setDetails({ ...details, error: false, loading: true });
+
     signin(details)
     .then(res => {
       if (res.error) {
@@ -45,7 +50,7 @@ const Loginform = () => {
             password:"" ,
             didRedirect: true
           });
-          Horizontalnav.User(res.name);
+          dispatch(logged_in_user(res));
       })}
       console.log("Successfull in hitting signin function in userAPIcalls")
     })

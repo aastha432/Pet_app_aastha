@@ -5,6 +5,7 @@ import Switch from "@material-ui/core/Switch";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import DataService from "./service/Data";
+import { useSelector } from 'react-redux';
 import { makeStyles } from "@material-ui/core/styles";
 import GoogleMapReact from 'google-map-react';
 import Sweet from './assets/Sweet/group-4.png';
@@ -26,6 +27,8 @@ const Geofence = () => {
   const [status, setStatus] = useState(null);
   const [petlat, setPetLat] = useState(null);
   const [petlng, setPetLng] = useState(null);
+  let device = useSelector((state) => state.selectedDeviceid);
+  const {deviceid} = device;
 
 const AnyReactComponent = ({ text }) => (
   <div style={{
@@ -49,7 +52,7 @@ const AnyReactComponent = ({ text }) => (
         lat: mylat,
         lng: mylng
       },
-      zoom: 11
+      zoom: 2
     };
   
       return (
@@ -68,7 +71,7 @@ const AnyReactComponent = ({ text }) => (
             <AnyReactComponent
               lat= {petlat}
               lng={petlng}
-              text={<img src={Sweet} alt="X"/>}
+              text={<img src={deviceid.ImageUrl} alt="X" className={classes.imagereceived}/>}
             />
           </GoogleMapReact>
           
@@ -114,9 +117,9 @@ const AnyReactComponent = ({ text }) => (
     }
   }
 
-  const getPetLocation = (deviceid) => {
+  const getPetLocation = () => {
     //deviceid need to be dyanamically set when pet is choosen from Navbar
-    RetrieveDevice(1246634)
+    RetrieveDevice(parseInt(deviceid.deviceid))
     .then(res => {
       console.log(`${res.data.lastsession.latitude} of type ${typeof(res.data.lastsession.latitude)}`);
       console.log(`${res.data.lastsession.longitude} of type ${typeof(res.data.lastsession.longitude)}`);
@@ -130,7 +133,7 @@ const AnyReactComponent = ({ text }) => (
   useEffect(() => {
     getPetLocation();
     getMyLocation();
-  }, []);
+  }, [device]);
 
   const onSubmit = (event) => {
 
@@ -189,6 +192,10 @@ const AnyReactComponent = ({ text }) => (
       color: "#ffffff",
       float: "right",
     },
+    imagereceived: {
+      height: 30,
+      width : 30
+    }
   }));
   const classes = useStyles();
 

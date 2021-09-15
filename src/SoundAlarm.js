@@ -5,10 +5,15 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import "./login.css";
+import { useSelector } from 'react-redux';
+
 
 const SoundAlarm = () => {
 
   const [soundAlarm, setSoundAlarm] = React.useState(false);
+  // got the selected the device from navbar
+  let device = useSelector((state) => state.selectedDeviceid);
+  const {deviceid} = device;
 
   const handleSoundAlarm = () => {
     soundAlarm ? setSoundAlarm(false) : setSoundAlarm(true);
@@ -44,6 +49,8 @@ const SoundAlarm = () => {
   
   }));
   const classes = useStyles();
+
+
   return (
     <div>
       <div>

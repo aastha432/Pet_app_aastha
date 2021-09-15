@@ -4,8 +4,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import TextField from "@material-ui/core/TextField";
 import Box from '@material-ui/core/Box';
-
-
 import Icon from '@material-ui/core/Icon';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -16,8 +14,10 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { Redirect,Link } from "react-router-dom";
-import { deleteCartItems, getaProduct, getCartItems, updateCartItems } from "./coreAPIcalls/ecommerceAPIcalls";
+import { createOrder, deleteCartItems, getaProduct, getCartItems, updateCartItems } from "./coreAPIcalls/ecommerceAPIcalls";
 import { forEach } from "lodash";
+import { order_details } from "./redux/actions/orderActions";
+import { useDispatch } from "react-redux";
 
 
 
@@ -97,13 +97,10 @@ const Cart = () => {
       const classes = useStyles();
       const [count,setCount] = useState(0);
       const[cartProducts, setCartProducts]= useState([]);
-      const[cartProductsDetails, setCartProductsDetails] = useState({
-        "productname" : "not loaded",
-        "productcurrency": "not",
-        "productrate": 0,
-      });
       const [refresh, setRefresh]= useState(false);
-      const[total, setTotal] = useState(0);
+      const[redirect, setRedirect] = useState(false);
+      const dispatch = useDispatch();
+       
 
       const preload = () => {
         getCartItems()
@@ -112,29 +109,24 @@ const Cart = () => {
         })
         .catch(error => console.log(error));
       };
-    
 
-      const retrieveInfo = (productid) => {
+      let total =0;
+      let orderitems = [];
 
-          getaProduct(productid)
-          .then(res => {setCartProductsDetails({
-            ...cartProductsDetails,
-            "productname" : res.productname,
-            "productcurrency": res.productcurrency,
-            "productrate": res.productrate
-          })
-          })
-          .catch(err => console.log(err));
-
-          /*setCartProductsDetails(prevItems => [...prevItems, {
-            "productid" : product.productid,
-            "productquantity" : product.productquantity,
-            "productname" : response.productname,
-            "productcurrency": response.productcurrency,
-            "productrate": response.productrate,
-          }]);*/
-
+      const handleTotal = (price) => {
+        total = total + price;
       }
+    
+      const handleOrderItems = (product) => {
+        orderitems.push({
+          "productid": product.productid,
+            "productname": product.productname,
+            "productquantity": product.productquantity,
+            "productcurrency": product.productcurrency,
+            "productrate": product.productrate
+        });
+      }
+
 
       useEffect(() => {
           preload();
@@ -147,21 +139,20 @@ const Cart = () => {
           <div>
           {cartProducts.map((product) => (
 
-            
             <div style={{ width: '100%' }} key={product.id}>
-              {retrieveInfo(product.productid)}
+              {handleTotal(Math.round((product.productrate * product.productquantity)*100) / 100 )}
+              {handleOrderItems(product)}
+
             <Box display="flex" p={1} bgcolor="background.paper">
+
               <Box p={1} flexGrow={1} bgcolor="grey.300">
-                <h3>{cartProductsDetails.productname}</h3>
+                <h3>{product.productname}</h3>
               </Box>
+
               <Box p={1} bgcolor="grey.300">
-                <h3>Price = {cartProductsDetails.productrate * cartProductsDetails.productquantity}</h3> 
-                {()=> {
-                  setTotal(
-                    total = total + (cartProductsDetails.productrate * cartProductsDetails.productquantity)
-                  )
-                }}
+                <h3>Price = {product.productcurrency} {Math.round((product.productrate * product.productquantity)*100) / 100}</h3> 
               </Box>
+
               <Box p={1} bgcolor="grey.300">
                 <Button
                   onClick={()=>{
@@ -169,8 +160,7 @@ const Cart = () => {
                     updateCartItems(productID)
                     .then(res => {
                       console.log(res);
-                      // Array -> element -> decrement productquantity
-                      //refresh ? setRefresh(false) : setRefresh(true);
+                      refresh ? setRefresh(false) : setRefresh(true);
                     })
                     .catch(error => console.log(error));
                   }}
@@ -186,8 +176,7 @@ const Cart = () => {
                     updateCartItems(productID)
                     .then(res => {
                       console.log(res);
-                      // Array -> element -> increment productquantity
-                      //refresh ? setRefresh(false) : setRefresh(true);
+                      refresh ? setRefresh(false) : setRefresh(true);
                     })
                     .catch(error => console.log(error));
                   }}
@@ -214,17 +203,34 @@ const Cart = () => {
               </Box>
             </Box>
           </div>
-          ))}
+          ))} 
+          <br></br><br></br><br></br>
+            <h3>Total price = {total}</h3>
+            <Button onClick={onSubmitOrder} variant="contained" className={classes.save}>
+            Place Order
+            </Button>
          </div> 
         )
       }
 
       const onSubmitOrder = () => {
-          //
+        const data= {
+          "ordercurrency": "INR",
+          "orderamount": total,
+          "orderitems": orderitems
+        }
+        createOrder(data)
+        .then((res) => {
+          console.log(res);
+          dispatch(order_details(res));
+          setRedirect(true);
+        })
+        .catch((err) => console.log(err))
       }
 
     return (
-    <div>
+    redirect ? <Redirect to="/payment"/> :
+      <div>
       <center>
         <Container component="main" maxWidth="xs">
           <div className={classes.paper}>
@@ -243,11 +249,7 @@ const Cart = () => {
             </div>
         </Container>
         <Product/>
-        <br></br><br></br><br></br>
-        <h3>Total price = {total}</h3>
-        <Button onClick={onSubmitOrder} variant="contained" className={classes.save}>
-         Place Order
-        </Button>
+        
       </center>
     </div>
     )

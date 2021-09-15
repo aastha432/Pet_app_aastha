@@ -24,6 +24,7 @@ import WhereisMyPet from "./WhereisMyPet";
 import { isAuthenticated } from "./coreAPIcalls/userAPIcalls";
 import E_commerce from "./E_commerce";
 import Cart from "./Cart";
+import Payment from "./Payment";
 
 
 const Navbar = () => {
@@ -110,6 +111,7 @@ return  isAuthenticated() ?  <div>
         <Route path="/E_commerce" exact component={E_commerce} />
         <Route path="/addNewPet" exact component={AddNewPet} />
         <Route path="/cart" exact component={Cart} />
+        <Route path="/payment" exact component={Payment} />
       </Switch>
     </Grid>
   </Grid>

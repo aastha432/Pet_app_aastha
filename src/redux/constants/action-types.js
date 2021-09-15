@@ -1,0 +1,7 @@
+
+
+export const ActionTypes = {
+    SELECTED_DEVICEID: "SELECTED_DEVICEID",
+    LOGGED_IN_USER: "LOGGED_IN_USER",
+    ORDER_DETAILS : "ORDER_DETAILS",
+  };

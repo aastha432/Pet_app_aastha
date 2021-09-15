@@ -4,7 +4,8 @@ import {ListAllDevicesLocation, RetrieveDevice, ListAllDevices, ListAllDevicesNa
 import AsyncTypeahead from 'react-bootstrap-typeahead';
 import { map } from 'lodash';
 import Sweet from './assets/Sweet/group-4.png';
-
+import { useSelector } from 'react-redux';
+import { makeStyles } from "@material-ui/core/styles";
 
 
 
@@ -24,26 +25,32 @@ const AnyReactComponent = ({ text }) => (
     </div>
   );
 
-export const Received = (deviceid) => {
-    console.log(deviceid);
-    return deviceid;
+ export const trackingPeriod = ()=> {
+    //will be deleted
   }
 
-export const trackingPeriod = (period) => {
-  console.log(`Period = ${period}`);
-  return period;
-}
+  const useStyles = makeStyles((theme) => ({
+    imagereceived: {
+      height: 30,
+      width : 30
+    }
+  
+  }));
 
 const WhereisMyPet = (timer) => {
 
   const [petlat, setPetLat] = useState(null);
   const [petlng, setPetLng] = useState(null);
-  const [deviceid, setDeviceid] = useState(Received());
-  const [period, setPeriod] = useState(trackingPeriod());
+  let device = useSelector((state) => state.selectedDeviceid);
+  const {deviceid} = device;
+  console.log(deviceid.petName);
+
+  const classes = useStyles();
+
   //1246634
 
   const preload =() => {
-    RetrieveDevice(1246634)
+    RetrieveDevice(parseInt(deviceid.deviceid))
     .then(res => {
       console.log(`${res.data.lastsession.latitude} pet lat`);
       console.log(`${res.data.lastsession.longitude} pet lng`);
@@ -55,19 +62,8 @@ const WhereisMyPet = (timer) => {
 }
 
   useEffect(() => {
-    if(period=="tracking")
-      setInterval(preload,1000);
-    else if(period=="normal")
-      setInterval(preload,10000);
-    else if (period=="power saving")
-      setInterval(preload,60000);
-    else
       preload();
-
-
-    //ContinuousSignin timer
-    clearInterval(timer);
-  },[period])
+  },[device])
 
   let defaultProps = {
       center: {
@@ -88,7 +84,8 @@ const WhereisMyPet = (timer) => {
             <AnyReactComponent
               lat= {petlat}
               lng={petlng}
-              text={<img src={Sweet} alt="X"/>}
+              
+              text={<img src={deviceid.ImageUrl} alt="X" className={classes.imagereceived}/>}
             />
           </GoogleMapReact>
         </div>

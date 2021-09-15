@@ -22,6 +22,8 @@ import Link from "@material-ui/core/Link";
 import { signout } from "../coreAPIcalls/userAPIcalls";
 import {getDeviceInfo} from "../coreAPIcalls/deviceAPIcalls"
 import {Received} from "../WhereisMyPet";
+import { useSelector ,useDispatch} from "react-redux";
+import { selected_deviceid } from "../redux/actions/deviceidActions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,10 +63,16 @@ const useStyles = makeStyles((theme) => ({
 export const Horizontalnav = () => {
   const classes = useStyles();
 
-  const [pet, setPet] = React.useState(null);
-  const [username, setUsername] = React.useState('Aastha');
   const [devices, setDevices] = useState([]);
   const [refresh, serRefresh] = useState(true);
+
+  let user = useSelector((state) => state.loggedInUser);
+  const { name } = user;
+
+  const dispatch = useDispatch();
+
+  let device = useSelector((state) => state.selectedDeviceid);
+  const {deviceid} = device;
 
   const preload = () => {
     getDeviceInfo().then(data => {
@@ -80,14 +88,10 @@ export const Horizontalnav = () => {
     preload();
   }, [refresh]);
 
-  const User = (name) => {
-    console.log(`${name} typeof ${typeof(name)}`);
-    setUsername(name);
-  }
+ 
 
   const handleChange = (event) => {
-
-    setPet(event.target.value);
+    dispatch(selected_deviceid(event.target.value));
   };
 
 
@@ -124,19 +128,17 @@ export const Horizontalnav = () => {
         <Select
           labelId="demo-simple-select-outlined-label"
           id="demo-simple-select-outlined"
-          value={pet}
+          value={deviceid.petName}
           onChange={handleChange}
           onClick ={() => {
             refresh? serRefresh(false) : serRefresh(true)
-            console.log(pet);
-            Received(pet);
           }
           }
           onContextMenu
           label="Pet"
         >
           {devices.map((device) => (
-          <MenuItem value={device.deviceid} key={device.deviceid}>
+          <MenuItem value={device} key={device.deviceid}>
             <div className="container">
               <div >
                <img src={device.ImageUrl} alt={Bailey} className={classes.imagereceived}/>
@@ -157,7 +159,7 @@ export const Horizontalnav = () => {
               <PersonIcon/>
               </div>
               <div className="text">
-                  Welcome 
+                  Welcome {name}
               </div>
             </div>
             </b>

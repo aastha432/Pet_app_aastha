@@ -8,6 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import SuccessImage from './assets/successfulregistration.png'
+import { useSelector } from 'react-redux';
 
 
 
@@ -229,6 +230,10 @@ function AlertDialogTurnOff() {
 
 
 export default function Device() {
+
+  // got the selected the device from navbar
+  let device = useSelector((state) => state.selectedDeviceid);
+  const {deviceid} = device;
   
   return (
     <div>
