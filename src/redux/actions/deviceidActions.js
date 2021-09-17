@@ -6,3 +6,10 @@ export const selected_deviceid = (deviceid) => {
     payload: deviceid,
   };
 };
+
+export const list_of_devices = (devices) => {
+  return {
+    type: ActionTypes.LIST_OF_DEVICES,
+    payload: devices,
+  };
+};

@@ -21,9 +21,9 @@ import { Link as LinkRouter , Redirect} from "react-router-dom";
 import Link from "@material-ui/core/Link";
 import { signout } from "../coreAPIcalls/userAPIcalls";
 import {getDeviceInfo} from "../coreAPIcalls/deviceAPIcalls"
-import {Received} from "../WhereisMyPet";
 import { useSelector ,useDispatch} from "react-redux";
-import { selected_deviceid } from "../redux/actions/deviceidActions";
+import { list_of_devices, selected_deviceid } from "../redux/actions/deviceidActions";
+import {listOfDevices} from "../redux/reducers/index";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,23 +63,28 @@ const useStyles = makeStyles((theme) => ({
 export const Horizontalnav = () => {
   const classes = useStyles();
 
-  const [devices, setDevices] = useState([]);
+  //const [devices, setDevices] = useState([]);
   const [refresh, serRefresh] = useState(true);
 
   let user = useSelector((state) => state.loggedInUser);
   const { name } = user;
+  let devices = useSelector((state) => state.listOfDevices);
+  const {devicelist} = devices;
+  console.log(devicelist);
 
   const dispatch = useDispatch();
 
   let device = useSelector((state) => state.selectedDeviceid);
   const {deviceid} = device;
 
+  //local set devices should come from redux
   const preload = () => {
     getDeviceInfo().then(data => {
       if (data.error) {
         console.log(data.error);
       } else {
-        setDevices(data.msg);
+        dispatch(list_of_devices(data.msg));
+        //setDevices(data.msg);
       }
     });
   };
@@ -128,7 +133,7 @@ export const Horizontalnav = () => {
         <Select
           labelId="demo-simple-select-outlined-label"
           id="demo-simple-select-outlined"
-          value={deviceid.petName}
+          value={deviceid.deviceid}
           onChange={handleChange}
           onClick ={() => {
             refresh? serRefresh(false) : serRefresh(true)
@@ -137,8 +142,8 @@ export const Horizontalnav = () => {
           onContextMenu
           label="Pet"
         >
-          {devices.map((device) => (
-          <MenuItem value={device} key={device.deviceid}>
+          {devicelist.map((device) => (
+          <MenuItem value={device.deviceid} key={device.deviceid}>
             <div className="container">
               <div >
                <img src={device.ImageUrl} alt={Bailey} className={classes.imagereceived}/>

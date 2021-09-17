@@ -10,8 +10,9 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import Button from "@material-ui/core/Button";
 import "./login.css";
+import { preload } from "./WhereisMyPet";
 import { useDispatch } from "react-redux";
-import { trackingperiod } from "./redux/actions/continuousSigninTimerActions";
+import { trackingperiod_normal, trackingperiod_powersaving, trackingperiod_tracking } from "./redux/actions/continuousSigninTimerActions";
 
 const TrackingPeriod = () => {
 
@@ -46,9 +47,14 @@ const TrackingPeriod = () => {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    dispatch(trackingperiod(selectedValue));
-    console.log(selectedValue);
-    //API to be made
+    if(selectedValue == "normal")
+      dispatch(trackingperiod_normal(preload));
+    else if(selectedValue == "power saving")
+      dispatch(trackingperiod_powersaving(preload));
+    else if(selectedValue == "tracking")
+      dispatch(trackingperiod_tracking(preload));
+
+      //API to be made
   };
 
   const classes = useStyles();

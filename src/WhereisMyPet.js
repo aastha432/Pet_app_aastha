@@ -7,6 +7,7 @@ import Sweet from './assets/Sweet/group-4.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from "@material-ui/core/styles";
 import { continuousSigninStop } from './redux/actions/continuousSigninTimerActions';
+import {getDeviceInfo} from "./coreAPIcalls/deviceAPIcalls"
 
 
 
@@ -39,32 +40,41 @@ const WhereisMyPet = () => {
 
   const [petlat, setPetLat] = useState(null);
   const [petlng, setPetLng] = useState(null);
+  const [deviceInfo, setDeviceInfo] = useState({});
 
   //redux 
   let device = useSelector((state) => state.selectedDeviceid);
   const {deviceid} = device;
-  let tracking = useSelector((state) => state.trackingPeriod);
-  console.log(tracking);
   const dispatch = useDispatch();
 
   const classes = useStyles();
 
   const preload =() => {
-    RetrieveDevice(parseInt(deviceid.deviceid))
+    RetrieveDevice(parseInt(deviceid))
     .then(res => {
-      console.log(`${res.data.lastsession.latitude} pet lat`);
-      console.log(`${res.data.lastsession.longitude} pet lng`);
+      console.log("Continuous location update");
+      console.log(`pet latitude = ${res.data.lastsession.latitude}`);
+      console.log(`pet longitude = ${res.data.lastsession.longitude}`);
       setPetLat(res.data.lastsession.latitude);
       setPetLng(res.data.lastsession.longitude);
-     }
-   )
-  .catch(err => {console.log(err)});
+     })
+     .catch((err) => console.log(err));
+
+     getDeviceInfo()
+     .then(res => {
+        res.msg.map((pet) => {
+          if(pet.deviceid == deviceid){
+            setDeviceInfo(pet);
+          }
+        })
+    })
+    .catch(err => {console.log(err)});
 }
 
   useEffect(() => {
       preload();
       dispatch(continuousSigninStop());
-  },[device])
+  },[device,petlat,petlng])
 
   let defaultProps = {
       center: {
@@ -86,7 +96,7 @@ const WhereisMyPet = () => {
               lat= {petlat}
               lng={petlng}
               
-              text={<img src={deviceid.ImageUrl} alt="X" className={classes.imagereceived}/>}
+              text={<img src={deviceInfo.ImageUrl} alt="X" className={classes.imagereceived}/>}
             />
           </GoogleMapReact>
         </div>
@@ -96,3 +106,4 @@ const WhereisMyPet = () => {
 
 
 export default WhereisMyPet;
+export const {preload} = WhereisMyPet;

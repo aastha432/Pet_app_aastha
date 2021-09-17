@@ -11,6 +11,8 @@ import GoogleMapReact from 'google-map-react';
 import Sweet from './assets/Sweet/group-4.png';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import {RetrieveDevice, geofenceAPI} from './coreAPIcalls/hologramAPIcalls';
+import {getDeviceInfo} from "./coreAPIcalls/deviceAPIcalls"
+
 
 //firebase
 import { getMessaging, getToken } from "firebase/messaging";
@@ -27,6 +29,8 @@ const Geofence = () => {
   const [status, setStatus] = useState(null);
   const [petlat, setPetLat] = useState(null);
   const [petlng, setPetLng] = useState(null);
+  const [deviceInfo, setDeviceInfo] = useState({});
+
   let device = useSelector((state) => state.selectedDeviceid);
   const {deviceid} = device;
 
@@ -71,7 +75,7 @@ const AnyReactComponent = ({ text }) => (
             <AnyReactComponent
               lat= {petlat}
               lng={petlng}
-              text={<img src={deviceid.ImageUrl} alt="X" className={classes.imagereceived}/>}
+              text={<img src={deviceInfo.ImageUrl} alt="X" className={classes.imagereceived}/>}
             />
           </GoogleMapReact>
           
@@ -119,7 +123,7 @@ const AnyReactComponent = ({ text }) => (
 
   const getPetLocation = () => {
     //deviceid need to be dyanamically set when pet is choosen from Navbar
-    RetrieveDevice(parseInt(deviceid.deviceid))
+    RetrieveDevice(parseInt(deviceid))
     .then(res => {
       console.log(`${res.data.lastsession.latitude} of type ${typeof(res.data.lastsession.latitude)}`);
       console.log(`${res.data.lastsession.longitude} of type ${typeof(res.data.lastsession.longitude)}`);
@@ -128,6 +132,17 @@ const AnyReactComponent = ({ text }) => (
      }
    )
    .catch(err => {console.log(err)});
+
+
+   getDeviceInfo()
+     .then(res => {
+        res.msg.map((pet) => {
+          if(pet.deviceid == deviceid){
+            setDeviceInfo(pet);
+          }
+        })
+    })
+    .catch(err => {console.log(err)});
   }
 
   useEffect(() => {
