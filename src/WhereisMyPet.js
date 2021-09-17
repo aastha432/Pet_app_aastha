@@ -4,8 +4,9 @@ import {ListAllDevicesLocation, RetrieveDevice, ListAllDevices, ListAllDevicesNa
 import AsyncTypeahead from 'react-bootstrap-typeahead';
 import { map } from 'lodash';
 import Sweet from './assets/Sweet/group-4.png';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from "@material-ui/core/styles";
+import { continuousSigninStop } from './redux/actions/continuousSigninTimerActions';
 
 
 
@@ -25,11 +26,8 @@ const AnyReactComponent = ({ text }) => (
     </div>
   );
 
- export const trackingPeriod = ()=> {
-    //will be deleted
-  }
 
-  const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
     imagereceived: {
       height: 30,
       width : 30
@@ -37,17 +35,19 @@ const AnyReactComponent = ({ text }) => (
   
   }));
 
-const WhereisMyPet = (timer) => {
+const WhereisMyPet = () => {
 
   const [petlat, setPetLat] = useState(null);
   const [petlng, setPetLng] = useState(null);
+
+  //redux 
   let device = useSelector((state) => state.selectedDeviceid);
   const {deviceid} = device;
-  console.log(deviceid.petName);
+  let tracking = useSelector((state) => state.trackingPeriod);
+  console.log(tracking);
+  const dispatch = useDispatch();
 
   const classes = useStyles();
-
-  //1246634
 
   const preload =() => {
     RetrieveDevice(parseInt(deviceid.deviceid))
@@ -63,6 +63,7 @@ const WhereisMyPet = (timer) => {
 
   useEffect(() => {
       preload();
+      dispatch(continuousSigninStop());
   },[device])
 
   let defaultProps = {

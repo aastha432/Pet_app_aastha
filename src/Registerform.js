@@ -21,6 +21,9 @@ import { signup , signin, authenticate} from "./coreAPIcalls/userAPIcalls";
 import BeanEater from "./assets/BeanEater.gif";
 import SuccessImage from './assets/successfulregistration.png'
 import WhereisMyPet from "./WhereisMyPet";
+import { useDispatch } from "react-redux";
+import {continuousSigninStart} from "./redux/actions/continuousSigninTimerActions"
+import { logged_in_user } from "./redux/actions/usernameAction";
 
 
 
@@ -45,6 +48,11 @@ const Registerform = () => {
     });
   const { name, email, password,error,loading, show ,formData} = details;
 
+    const dispatch = useDispatch();
+
+
+
+
   const onSubmit = (event) => {
     event.preventDefault();
     setDetails({ ...details, error: false, loading: true });
@@ -62,9 +70,10 @@ const Registerform = () => {
         email:"",
         password:"",
       })}
-      console.log("Successfull in hitting signup function in userAPIcalls");    
-      const timer = setInterval(ContinuousHittingOfSignin, 2000);
-      WhereisMyPet({timer : timer});
+      console.log("Successfull in hitting signup function in userAPIcalls");  
+      
+      //apply redux here
+      dispatch(continuousSigninStart(ContinuousHittingOfSignin));
     }
     )
     .catch(err => {console.log("Unsuccessfull in hitting signup function in userAPIcalls")});
@@ -143,11 +152,13 @@ const Registerform = () => {
     signin(data)
     .then((res) => {
       if(res.auth){
-        setUser({...user, auth : true});
+        
         authenticate(res,() => { 
            formData.set("email","");
            formData.set("password","");
+           dispatch(logged_in_user(res));
         })
+        setUser({...user, auth : true});
       }
         
       console.log(res);

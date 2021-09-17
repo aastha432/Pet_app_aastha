@@ -10,10 +10,11 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import Button from "@material-ui/core/Button";
 import "./login.css";
-import DataService from "./service/Data";
-import { trackingPeriod } from "./WhereisMyPet";
+import { useDispatch } from "react-redux";
+import { trackingperiod } from "./redux/actions/continuousSigninTimerActions";
 
 const TrackingPeriod = () => {
+
   const useStyles = makeStyles((theme) => ({
     root: {
       flexGrow: 1,
@@ -37,15 +38,16 @@ const TrackingPeriod = () => {
   }));
 
   const [selectedValue, setSelectedValue] = React.useState("normal");
+  const dispatch = useDispatch();
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
+
   const onSubmit = (event) => {
     event.preventDefault();
-    const data = selectedValue;
-    console.log(data);
-    trackingPeriod(data);
+    dispatch(trackingperiod(selectedValue));
+    console.log(selectedValue);
     //API to be made
   };
 
