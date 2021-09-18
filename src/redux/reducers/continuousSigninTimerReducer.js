@@ -31,6 +31,7 @@ export const continuousSigninStartReducer = (state = intialState, { type, payloa
   };*/
 
   export const trackingPeriodReducer = (state = initialPeriod, { type, payload }) => {
+    console.log(type);
     switch (type) {
       case ActionTypes.TRACKING_PERIOD_NORMAL:
         return { ...state , period_timer : clearInterval(state.period_timer), period_timer : setInterval(payload,10000)};

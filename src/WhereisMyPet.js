@@ -8,8 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from "@material-ui/core/styles";
 import { continuousSigninStop } from './redux/actions/continuousSigninTimerActions';
 import {getDeviceInfo} from "./coreAPIcalls/deviceAPIcalls"
+import { selected_device_info, selected_device_latitude, selected_device_longitude } from './redux/actions/deviceidActions';
 
-
+//all my device actions are in redux/actions/deviceiActions
+//all my device reducers are in redux/reducers/deviceiReducers
+//combined reducers are in edux/reducers/index
 
 const AnyReactComponent = ({ text }) => (
     <div style={{
@@ -38,14 +41,30 @@ const useStyles = makeStyles((theme) => ({
 
 const WhereisMyPet = () => {
 
-  const [petlat, setPetLat] = useState(null);
-  const [petlng, setPetLng] = useState(null);
-  const [deviceInfo, setDeviceInfo] = useState({});
+  // these 3 need to be replaced by global states from redux
+  const [petlat, setPetLat] = useState(null); //redux equivalent = selected_device_latitude (action)
+  const [petlng, setPetLng] = useState(null); //redux equivalent = selected_device_longitude (action)
+  const [deviceInfo, setDeviceInfo] = useState({}); //redux equivalent = selected_device_info (action)
 
   //redux 
   let device = useSelector((state) => state.selectedDeviceid);
   const {deviceid} = device;
+
+  let Latitude = useSelector((state) => state.selectedDeviceLat);
+  const {latitude} = Latitude;
+  console.log(latitude); //not working
+
+  let Longitude = useSelector((state) => state.selectedDeviceLong);
+  const {longitude} = Longitude;
+  console.log(longitude); //not working
+
+  let Info = useSelector((state) => state.selectedDeviceInfo);
+  const {info} = Info;
+  console.log(info); //not working
+
   const dispatch = useDispatch();
+  //
+
 
   const classes = useStyles();
 
@@ -57,6 +76,8 @@ const WhereisMyPet = () => {
       console.log(`pet longitude = ${res.data.lastsession.longitude}`);
       setPetLat(res.data.lastsession.latitude);
       setPetLng(res.data.lastsession.longitude);
+      dispatch(selected_device_latitude(res.data.lastsession.latitude)); //not working
+      dispatch(selected_device_longitude(res.data.lastsession.longitude)); //not working
      })
      .catch((err) => console.log(err));
 
@@ -65,6 +86,7 @@ const WhereisMyPet = () => {
         res.msg.map((pet) => {
           if(pet.deviceid == deviceid){
             setDeviceInfo(pet);
+            dispatch(selected_device_info(pet)); //not working
           }
         })
     })
@@ -74,7 +96,7 @@ const WhereisMyPet = () => {
   useEffect(() => {
       preload();
       dispatch(continuousSigninStop());
-  },[device,petlat,petlng])
+  },[device])
 
   let defaultProps = {
       center: {
@@ -93,8 +115,8 @@ const WhereisMyPet = () => {
             defaultZoom={defaultProps.zoom}
           >
             <AnyReactComponent
-              lat= {petlat}
-              lng={petlng}
+              lat= {petlat} // lat = {latitude}
+              lng={petlng}  // lng = {longitude}
               
               text={<img src={deviceInfo.ImageUrl} alt="X" className={classes.imagereceived}/>}
             />
@@ -106,4 +128,4 @@ const WhereisMyPet = () => {
 
 
 export default WhereisMyPet;
-export const {preload} = WhereisMyPet;
+export const {preload} = WhereisMyPet; //if preload is outside WhereismyPet hooks calls are invalid(error)

@@ -47,8 +47,11 @@ const TrackingPeriod = () => {
 
   const onSubmit = (event) => {
     event.preventDefault();
+   
+
     if(selectedValue == "normal")
-      dispatch(trackingperiod_normal(preload));
+       {//trial();
+      dispatch(trackingperiod_normal(preload));}
     else if(selectedValue == "power saving")
       dispatch(trackingperiod_powersaving(preload));
     else if(selectedValue == "tracking")
